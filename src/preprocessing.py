@@ -4,8 +4,8 @@ def get_tree_data():
     """
     Creates a dataframe with the street tree data
 
-    OUTPUT:
-    - df (dataframe): contains information in the street tree dataset
+    RETURNS:
+    - (dataframe): contains information in the street tree dataset
     """
     df = pd.read_csv('data/Street_Tree_List.csv')
 
@@ -25,8 +25,8 @@ def get_imagery_metadata():
     """
     Creates a dataframe with the street tree data
 
-    OUTPUT:
-    - df (dataframe): contains information in the street tree dataset
+    RETURNS:
+    - (dataframe): contains information in the street tree dataset
     """
     df = pd.read_csv('data/HIGH_RES_ORTHO_227914.txt',
                       usecols = ['Image Name',
