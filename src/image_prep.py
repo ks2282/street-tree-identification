@@ -17,22 +17,20 @@ def get_centroid(coordinates):
 class ImageProcessor(object):
     """ Splits and labels an image for street tree content
     """
-    def __init__(self, image_path, image_metadata):
+    def __init__(self, img, image_metadata, filename, output_path):
         """
         ARGUMENTS:
-        - image_path (string): path to access image file
+        - img (Image): image to process
         - image_metadata (dataframe): metadata file containing name and bounding
             coordinates of each subimage
         """
-        self.img = Image.open(image_path) # the image
+        self.img = img # the image
         self.width = self.img.size[0] # width of the image
         self.length = self.img.size[1] # length of the image
-        self.dirname = os.path.dirname(image_path) # directory containing the image file
+        self.output_path = output_path # directory to write subimages to
         self.image_metadata = image_metadata # image metadata file
-
-        base = os.path.basename(image_path)
-        self.filename = os.path.splitext(base)[0] # name of file without extension
-        self.ext = os.path.splitext(base)[1] # file extension
+        self.filename = filename # name of file without extension
+        self.ext = '.tif' # file extension
 
         self.image_NW, self.image_SE = self._get_image_coordinates() # bounding coordinates
 
@@ -99,12 +97,13 @@ class ImageProcessor(object):
         RETURNS:
         - boolean
         """
-        trees = list(zip(tree_data.Latitude, tree_data.Longitude))
-        for tree in trees:
-            latcheck = (tree[0] < subimage_NW[0]) & (tree[0] > subimage_SE[0])
-            longcheck = (tree[1] > subimage_NW[1]) & (tree[1] < subimage_SE[1])
-            if latcheck & longcheck:
-                return True
+        included_tree = tree_data.copy()
+        included_tree = included_tree[included_tree['Latitude'] < subimage_NW[0]]
+        included_tree = included_tree[included_tree['Latitude'] > subimage_SE[0]]
+        included_tree = included_tree[included_tree['Longitude'] > subimage_NW[1]]
+        included_tree = included_tree[included_tree['Longitude'] < subimage_SE[1]]
+        if included_tree.shape[0] > 0:
+            return True
         return False
 
     def split_and_label(self, side_length, tree_data):
@@ -121,9 +120,9 @@ class ImageProcessor(object):
                 subimage = self._get_subimage(row, column, side_length)
                 subimage_NW, subimage_SE = self._get_subimage_coordinates(row, column, coord_step)
                 if self._contains_tree(tree_data, subimage_NW, subimage_SE):
-                    path = self.dirname + '/HasStreetTree/'
+                    path = self.output_path + '/HasStreetTree/'
                 else:
-                    path = self.dirname + '/NoStreetTree/'
+                    path = self.output_path + '/NoStreetTree/'
                 subimage_centroid = get_centroid((subimage_NW, subimage_SE))
                 new_filename = self.filename + '_' + str(row) + '_' + str(column) \
                                 + '_' + str(subimage_centroid[0]) + '_' + \

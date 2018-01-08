@@ -1,5 +1,7 @@
 #ipython notebooks
 .ipynb_checkpoints
+data_storage.ipynb
+street_tree_data_exploration.ipynb
 
 #raw data
 data/
