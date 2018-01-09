@@ -4,7 +4,7 @@ import io, sys, os
 import pandas as pd
 import boto
 from boto.s3.key import Key
-from src.image_prep import ImageProcessor
+from image_prep import ImageProcessor
 
 def create_connection(bucket_name):
     """Returns s3 connection and specified bucket.
