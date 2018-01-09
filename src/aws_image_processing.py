@@ -92,7 +92,7 @@ def get_s3_image(bucket, filename):
 
 def process_s3_images(bucket, subfolder, image_metadata, output_path, side_length, tree_data):
     image_files = get_bucket_contents(bucket, subfolder)
-    for filename in image_files[5:6]:
+    for filename in image_files:
         img = get_s3_image(bucket, filename)
         name = filename[len(subfolder)+1:-4] # assumes 3-character extension, such as .tif
         tile = ImageProcessor(img, image_metadata, name, output_path)
