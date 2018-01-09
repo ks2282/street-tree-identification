@@ -105,12 +105,10 @@ def load_to_s3(destination, bucket):
     - bucket (s3 bucket)
     """
     for filename in os.listdir(destination + '/HasStreetTree'):
-        print(filename)
         key = Key(bucket)
         key.key = 'labeled_data/HasStreetTree/' + filename
         key.set_contents_from_filename(destination + '/HasStreetTree/' + filename)
     for filename in os.listdir(destination + '/NoStreetTree'):
-        print(filename)
         key = Key(bucket)
         key.key = 'labeled_data/NoStreetTree/' + filename
         key.set_contents_from_filename(destination + '/NoStreetTree/' + filename)
