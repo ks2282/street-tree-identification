@@ -1,11 +1,10 @@
-import fnmatch
 from PIL import Image
 import io, sys, os
 import pandas as pd
 import boto
 from boto.s3.key import Key
 from image_prep import ImageProcessor
-from aws_functions import create_connection, get_bucket_contents, get_s3_image
+from aws_functions import create_connection, get_bucket_contents
 
 def get_tree_data(destination, bucket):
     """Returns a dataframe with the street tree data.
@@ -53,9 +52,23 @@ def get_imagery_metadata(destination, bucket):
 
     return df
 
+def get_s3_image(bucket, filename):
+    """Returns an image from a filepath to S3
+
+    ARGUMENTS:
+    - filepath: string, s3 uri to tif file
+
+    RETURNS:
+    - Image
+    """
+    key = bucket.get_key(filename)
+    tmp = io.BytesIO()
+    key.get_contents_to_file(tmp)
+    return Image.open(tmp)
+
 def process_s3_images(bucket, subfolder, image_metadata, output_path, side_length, tree_data):
     image_files = get_bucket_contents(bucket, subfolder)
-    for filename in image_files:
+    for filename in image_files[5:6]:
         img = get_s3_image(bucket, filename)
         name = filename[len(subfolder)+1:-4] # assumes 3-character extension, such as .tif
         tile = ImageProcessor(img, image_metadata, name, output_path)
