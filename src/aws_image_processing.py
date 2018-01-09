@@ -5,16 +5,7 @@ import pandas as pd
 import boto
 from boto.s3.key import Key
 from image_prep import ImageProcessor
-
-def create_connection(bucket_name):
-    """Returns s3 connection and specified bucket.
-
-    ARGUMENTS:
-    - bucket_name (string)
-    """
-    conn = boto.connect_s3()
-    bucket = conn.get_bucket(bucket_name)
-    return conn, bucket
+from aws_functions import create_connection, get_bucket_contents, get_s3_image
 
 def get_tree_data(destination, bucket):
     """Returns a dataframe with the street tree data.
@@ -61,34 +52,6 @@ def get_imagery_metadata(destination, bucket):
                                  'SE Corner Lat dec', 'SE Corner Long dec',])
 
     return df
-
-
-def get_bucket_contents(bucket, subfolder):
-    """Returns content from an S3 bucket for a specified subfolder
-
-    ARGUMENTS:
-    - bucket (S3 bucket)
-    - subfolder (string)
-
-    RETURNS:
-    - list of files contained in specified subfolder
-    """
-    lst = [key.name for key in bucket]
-    return fnmatch.filter(lst, subfolder + '/*')[1:]
-
-def get_s3_image(bucket, filename):
-    """Returns an image from a filepath to S3
-
-    ARGUMENTS:
-    - filepath: string, s3 uri to tif file
-
-    RETURNS:
-    - Image
-    """
-    key = bucket.get_key(filename)
-    tmp = io.BytesIO()
-    key.get_contents_to_file(tmp)
-    return Image.open(tmp)
 
 def process_s3_images(bucket, subfolder, image_metadata, output_path, side_length, tree_data):
     image_files = get_bucket_contents(bucket, subfolder)
