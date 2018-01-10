@@ -37,35 +37,36 @@ def get_image_array_lists(bucket):
     tree_files = get_bucket_contents(bucket, 'test_subset/HasStreetTree')
     no_tree_files = get_bucket_contents(bucket, 'test_subset/NoStreetTree')
     for f in tree_files:
-        data.append(s3_image_to_array(bucket, f))
-        labels.append(1)
+        img = s3_image_to_array(bucket, f)
+        if img.shape[0] == img.shape[1] == 100:
+            data.append(img)
+            labels.append(1)
     for f in no_tree_files:
-        data.append(s3_image_to_array(bucket, f))
-        labels.append(0)
-    return data, labels
+        img = s3_image_to_array(bucket, f)
+        if img.shape[0] == img.shape[1] == 100:
+            data.append(img)
+            labels.append(0)
+    return np.array(data), np.array(labels)
 
 def split_training_data(data, labels):
     """Returns
 
     ARGUMENTS:
     - bucket (s3 bucket)
-    - data (list of numpy arrays)
-    - labels (list of binary values)
+    - data (numpy array of numpy arrays)
+    - labels (numpy array of binary values)
     """
     X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.3)
     return X_train, X_test, y_train, y_test
 
 def save_data_to_s3(bucket, X_train, X_test, y_train, y_test):
-    """Saves arrays to s3
+    """Saves arrays locally and to s3
     """
-    np.savez('trees_temp/X_train.npz', *X_train)
-    np.savez('trees_temp/X_test.npz', *X_test)
-    np.save('trees_temp/y_train.npy', y_train)
-    np.save('trees_temp/y_test.npy', y_test)
-    for filename in os.listdir('trees_temp'):
-        key = Key(bucket)
-        key.key = 'test_train_data/' + filename
-        key.set_contents_from_filename('trees_temp/' + filename)
+    np.savez_compressed('trees_temp/test_train_data.npz',
+                            X_train, X_test, y_train, y_test)
+    key = Key(bucket)
+    key.key = 'test_train_data/test_train_data.npz'
+    key.set_contents_from_filename('trees_temp/test_train_data.npz')
 
 def check_filepaths():
     if not os.path.exists('trees_temp'):
