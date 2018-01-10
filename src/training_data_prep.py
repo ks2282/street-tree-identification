@@ -34,8 +34,8 @@ def get_image_array_lists(bucket):
     """
     data = []
     labels = []
-    tree_files = get_bucket_contents(bucket, 'test_subset/HasStreetTree')
-    no_tree_files = get_bucket_contents(bucket, 'test_subset/NoStreetTree')
+    tree_files = get_bucket_contents(bucket, 'labeled_data/HasStreetTree')
+    no_tree_files = get_bucket_contents(bucket, 'labeled_data/NoStreetTree')
     for f in tree_files:
         img = s3_image_to_array(bucket, f)
         if img.shape[0] == img.shape[1] == 100:
