@@ -85,5 +85,5 @@ def main(image_color_flag):
     save_data_to_s3(bucket, X_train, X_test, y_train, y_test, image_color_flag)
 
 if __name__ == '__main__':
-    image_color_flag = sys.argv[1]
+    image_color_flag = int(sys.argv[1])
     main(image_color_flag)
