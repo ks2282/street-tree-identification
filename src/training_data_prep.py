@@ -1,4 +1,4 @@
-import os
+import os, sys
 import boto
 from boto.s3.key import Key
 from aws_functions import create_connection, get_bucket_contents
