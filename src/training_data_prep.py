@@ -66,7 +66,7 @@ def save_data_to_s3(bucket, X_train, X_test, y_train, y_test, image_color_flag):
     if image_color_flag == 1:
         filename = 'test_train_data_color.npz'
     if image_color_flag == 0:
-        filename = 'test_train_data_grayscale.npz'
+        filename = 'test_train_data.npz'
     np.savez_compressed('trees_temp/' + filename,
                             X_train, X_test, y_train, y_test)
     key = Key(bucket)
