@@ -68,8 +68,12 @@ def precision_recall(X, y, model):
     P = float(np.sum(y == 1))
     TP = float(np.sum((y_pred == 1) & (y == 1)))
     FP = float(np.sum((y_pred == 1) & (y == 0)))
-    precision = TP/(TP + FP)
-    recall = TP/P
+    if np.sum(y_pred == 1) > 0:
+        precision = TP/(TP + FP)
+    else: precision = 'No predicted positives.'
+    if P > 0:
+        recall = TP/P
+    else: recall = 'No positive labels in validation set.'
     return precision, recall
 
 def nn_model(X_train, X_val, y_train, y_val):
