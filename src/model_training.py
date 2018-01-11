@@ -112,32 +112,22 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size):
     print('Validation precision: ', precision)
     print('Validation recall: ', recall)
 
-def vvg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size):
+def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size):
     input_shape = (100, 100, 1)
     X_train = X_train.astype('float32')
     X_train /= 255
 
-    model = Sequential()
-    model.add(Conv2D(32, kernel_size=(3, 3),
-                     activation='relu',
-                     input_shape=input_shape))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
-    model.add(MaxPooling2D(pool_size=(2, 2)))
-    model.add(Dropout(0.25))
-    model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
-    model.add(Dropout(0.5))
-    model.add(Dense(1, activation='sigmoid'))
+    model = VGG16(weights=None, input_shape=input_shape, classes=1)
 
     model.compile(loss=keras.losses.binary_crossentropy,
               optimizer=keras.optimizers.SGD(lr=0.01),
               metrics=['accuracy'])
 
     model.fit(X_train, y_train,
-          verbose=1,
           batch_size = batch_size,
-          epochs=num_epochs,
-          validation_data=(X_val, y_val))
+          epochs = num_epochs,
+          verbose = 1,
+          validation_data = (X_val, y_val))
 
     score = model.evaluate(X_val, y_val, verbose=0)
     print('Validation loss:' , score[0])
@@ -151,15 +141,19 @@ def check_filepaths():
     if not os.path.exists('trees_temp'):
         os.makedirs('trees_temp')
 
-def main(image_color_flag, training_size, num_epochs, batch_size):
+def main(image_color_flag, training_size, num_epochs, batch_size, vgg):
     check_filepaths()
     X_train, y_train = get_data(image_color_flag, training_size)
     X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
-    nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size)
+    if vgg == 1:
+        vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size)
+    else:
+        nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size)
 
 if __name__ == '__main__':
     image_color_flag = int(sys.argv[1])
     training_size = int(sys.argv[2])
     num_epochs = int(sys.argv[3])
     batch_size = int(sys.argv[4])
-    main(image_color_flag, training_size, num_epochs, batch_size)
+    vgg = int(sys.argv[5])
+    main(image_color_flag, training_size, num_epochs, batch_size, vgg)
