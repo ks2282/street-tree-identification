@@ -50,10 +50,26 @@ def get_data(image_color_flag, training_size):
     X_train = X_train[:training_size]
     y_train = y_train[:training_size]
     X_train = X_train.reshape(X_train.shape[0], 100, 100, 1)
-    y_train = keras.utils.to_categorical(y_train, 0)
+    y_train = y_train.reshape(y_train.shape[0], 1)
     return X_train, y_train
 
-def nn_model(X_train, y_train):
+def train_val_split(X, y):
+    X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.3)
+    return X_train, X_val, y_train, y_val
+
+def precision_recall(X, y):
+    """Return precision and recall for the feature and label data.
+
+    ARGUMENTS:
+    X (numpy array)
+    y (numpy array)
+    """
+    y_pred = model.predict(X).round()
+    precision = np.sum((y_pred == 1) & (y == 1))/np.sum(y_pred == 1)
+    recall = np.sum((y_pred == 1) & (y == 1))/np.sum(y == 1)
+    return precision, recall
+
+def nn_model(X_train, X_val, y_train, y_val):
     input_shape = (100, 100, 1)
     X_train = X_train.astype('float32')
     X_train /= 255
@@ -68,20 +84,24 @@ def nn_model(X_train, y_train):
     model.add(Flatten())
     model.add(Dense(128, activation='relu'))
     model.add(Dropout(0.5))
-    model.add(Dense(2, activation='softmax'))
+    model.add(Dense(1, activation='sigmoid'))
 
-    model.compile(loss=keras.losses.categorical_crossentropy,
+    model.compile(loss=keras.losses.binary_crossentropy,
               optimizer=keras.optimizers.SGD(lr=0.01),
               metrics=['accuracy'])
 
     model.fit(X_train, y_train,
           verbose=1,
           epochs=10,
-          validation_split=0.3)
+          validation_data=(X_val, y_val))
 
-    score = model.evaluate(X_train, y_train, verbose=0)
-    print('Test loss:', score[0])
-    print('Test accuracy:', score[1])
+    score = model.evaluate(X_val, y_val, verbose=0)
+    print('Validation loss:' , score[0])
+    print('Validation accuracy: ', score[1])
+
+    precision, recall = precision_recall(X_val, y_val)
+    print('Valication precision: ', precision)
+    print('Validation accuracy: ', recall)
 
 def check_filepaths():
     if not os.path.exists('trees_temp'):
@@ -90,7 +110,8 @@ def check_filepaths():
 def main(image_color_flag, training_size):
     check_filepaths()
     X_train, y_train = get_data(image_color_flag, training_size)
-    nn_model(X_train, y_train)
+    X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
+    nn_model(X_train, X_val, y_train, y_val)
 
 if __name__ == '__main__':
     image_color_flag = int(sys.argv[1])
