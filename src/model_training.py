@@ -30,7 +30,7 @@ def download_s3_data(filename):
     - filename
     """
     conn, bucket = create_connection('treedata-ks')
-    key = bucket.get_key('test_subset/' + filename)
+    key = bucket.get_key('test_train_data/' + filename)
     key.get_contents_to_filename('trees_temp/' + filename)
 
 def get_data(image_color_flag, training_size):
@@ -76,7 +76,7 @@ def nn_model(X_train, y_train):
 
     model.fit(X_train, y_train,
           verbose=1,
-          epochs=4,
+          epochs=10,
           validation_split=0.3)
 
     score = model.evaluate(X_train, y_train, verbose=0)
