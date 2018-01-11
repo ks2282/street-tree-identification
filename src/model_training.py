@@ -76,6 +76,7 @@ def nn_model(X_train, y_train):
 
     model.fit(X_train, y_train,
           verbose=1,
+          epochs=4,
           validation_split=0.3)
 
     score = model.evaluate(X_train, y_train, verbose=0)
