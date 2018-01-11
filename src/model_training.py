@@ -57,7 +57,7 @@ def train_val_split(X, y):
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.3)
     return X_train, X_val, y_train, y_val
 
-def precision_recall(X, y):
+def precision_recall(X, y, model):
     """Return precision and recall for the feature and label data.
 
     ARGUMENTS:
@@ -99,7 +99,7 @@ def nn_model(X_train, X_val, y_train, y_val):
     print('Validation loss:' , score[0])
     print('Validation accuracy: ', score[1])
 
-    precision, recall = precision_recall(X_val, y_val)
+    precision, recall = precision_recall(X_val, y_val, model)
     print('Valication precision: ', precision)
     print('Validation accuracy: ', recall)
 
