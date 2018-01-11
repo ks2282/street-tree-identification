@@ -151,11 +151,11 @@ def check_filepaths():
     if not os.path.exists('trees_temp'):
         os.makedirs('trees_temp')
 
-def main(image_color_flag, training_size):
+def main(image_color_flag, training_size, num_epochs, batch_size):
     check_filepaths()
     X_train, y_train = get_data(image_color_flag, training_size)
     X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
-    nn_model(X_train, X_val, y_train, y_val)
+    nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size)
 
 if __name__ == '__main__':
     image_color_flag = int(sys.argv[1])
