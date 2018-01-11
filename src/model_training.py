@@ -65,8 +65,11 @@ def precision_recall(X, y, model):
     y (numpy array)
     """
     y_pred = model.predict(X).round()
-    precision = np.sum((y_pred == 1) & (y == 1))/np.sum(y_pred == 1)
-    recall = np.sum((y_pred == 1) & (y == 1))/np.sum(y == 1)
+    P = float(np.sum(y == 1))
+    TP = float(np.sum((y_pred == 1) & (y == 1)))
+    FP = float(np.sum((y_pred == 1) & (y == 0)))
+    precision = TP/(TP + FP)
+    recall = TP/P
     return precision, recall
 
 def nn_model(X_train, X_val, y_train, y_val):
@@ -100,8 +103,8 @@ def nn_model(X_train, X_val, y_train, y_val):
     print('Validation accuracy: ', score[1])
 
     precision, recall = precision_recall(X_val, y_val, model)
-    print('Valication precision: ', precision)
-    print('Validation accuracy: ', recall)
+    print('Validation precision: ', precision)
+    print('Validation recall: ', recall)
 
 def check_filepaths():
     if not os.path.exists('trees_temp'):
