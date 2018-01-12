@@ -46,6 +46,7 @@ def get_data(image_color_flag, training_size):
     if image_color_flag == 1:
         filename = 'test_train_data_color.npz'
     if not os.path.exists('trees_temp/' + filename):
+        print('Downloading data from S3.')
         download_s3_data(filename)
     X_train, X_test, y_train, y_test = restore_matrices('trees_temp/' + filename)
     X_train = X_train[:training_size]
@@ -80,7 +81,7 @@ def precision_recall(X, y, model):
     else: recall = 'No positive labels in validation set.'
     return precision, recall
 
-def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag):
+def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag, learning_rate):
     if image_color_flag == 0:
         input_shape = (100, 100, 1)
     else: input_shape = (100, 100, 3)
@@ -100,7 +101,7 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss=keras.losses.binary_crossentropy,
-              optimizer=keras.optimizers.SGD(lr=0.01),
+              optimizer=keras.optimizers.SGD(lr=learning_rate),
               metrics=['accuracy'])
 
     model.fit(X_train, y_train,
@@ -117,7 +118,7 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
     print('Validation precision: ', precision)
     print('Validation recall: ', recall)
 
-def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag):
+def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag, learning_rate):
     if image_color_flag == 0:
         input_shape = (100, 100, 1)
     else: input_shape = (100, 100, 3)
@@ -127,7 +128,7 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     model = VGG16(weights=None, input_shape=input_shape, classes=1)
 
     model.compile(loss=keras.losses.binary_crossentropy,
-              optimizer=keras.optimizers.SGD(lr=0.01),
+              optimizer=keras.optimizers.SGD(lr=learning_rate),
               metrics=['accuracy'])
 
     model.fit(X_train, y_train,
@@ -144,23 +145,35 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     print('Validation precision: ', precision)
     print('Validation recall: ', recall)
 
+
 def check_filepaths():
     if not os.path.exists('trees_temp'):
         os.makedirs('trees_temp')
 
-def main(image_color_flag, training_size, num_epochs, batch_size, vgg):
+def main(image_color_flag, training_size, num_epochs, batch_size, learning_rate, vgg):
     check_filepaths()
+    filename = 'trees_temp/kerasmodel_' \
+                + str(training_size) + 'images_'
+                + str(num_epochs) + 'epochs_' \
+                + str(batch_size) + 'batch_' \
+                + str(learning_rate) + 'lr' \
+    if image_color_flag == 1: filename += '_RGB'
     X_train, y_train = get_data(image_color_flag, training_size)
     X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
     if vgg == 1:
-        vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag)
+        vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, \
+                    image_color_flag, learning_rate)
+        filename += '_vgg'
     else:
-        nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag)
+        nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, \
+                    image_color_flag, learning_rate)
+    model.save(filename + '.h5')
 
 if __name__ == '__main__':
     image_color_flag = int(sys.argv[1])
     training_size = int(sys.argv[2])
     num_epochs = int(sys.argv[3])
     batch_size = int(sys.argv[4])
-    vgg = int(sys.argv[5])
-    main(image_color_flag, training_size, num_epochs, batch_size, vgg)
+    learning_rate = int(sys.argv[5])
+    vgg = int(sys.argv[6])
+    main(image_color_flag, training_size, num_epochs, batch_size, learning_rate, vgg)
