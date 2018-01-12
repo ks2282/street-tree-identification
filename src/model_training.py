@@ -50,7 +50,10 @@ def get_data(image_color_flag, training_size):
     X_train, X_test, y_train, y_test = restore_matrices('trees_temp/' + filename)
     X_train = X_train[:training_size]
     y_train = y_train[:training_size]
-    X_train = X_train.reshape(X_train.shape[0], 100, 100, 1)
+    if image_color_flag == 0:
+        X_train = X_train.reshape(X_train.shape[0], 100, 100, 1)
+    if image_color_flag == 1:
+        X_train = X_train.reshape(X_train.shape[0], 100, 100, 3)
     y_train = y_train.reshape(y_train.shape[0], 1)
     return X_train, y_train
 
@@ -77,8 +80,10 @@ def precision_recall(X, y, model):
     else: recall = 'No positive labels in validation set.'
     return precision, recall
 
-def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size):
-    input_shape = (100, 100, 1)
+def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag):
+    if image_color_flag == 0:
+        input_shape = (100, 100, 1)
+    else input_shape = (100, 100, 3)
     X_train = X_train.astype('float32')
     X_train /= 255
 
@@ -112,8 +117,10 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size):
     print('Validation precision: ', precision)
     print('Validation recall: ', recall)
 
-def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size):
-    input_shape = (100, 100, 1)
+def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag):
+    if image_color_flag == 0:
+        input_shape = (100, 100, 1)
+    else input_shape = (100, 100, 3)
     X_train = X_train.astype('float32')
     X_train /= 255
 
@@ -146,9 +153,9 @@ def main(image_color_flag, training_size, num_epochs, batch_size, vgg):
     X_train, y_train = get_data(image_color_flag, training_size)
     X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
     if vgg == 1:
-        vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size)
+        vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag)
     else:
-        nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size)
+        nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag)
 
 if __name__ == '__main__':
     image_color_flag = int(sys.argv[1])
