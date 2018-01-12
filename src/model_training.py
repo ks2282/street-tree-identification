@@ -107,8 +107,7 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
     model.fit(X_train, y_train,
           verbose=1,
           batch_size = batch_size,
-          epochs=num_epochs,
-          validation_data=(X_val, y_val))
+          epochs=num_epochsy)
 
     score = model.evaluate(X_val, y_val, verbose=0)
     print('Validation loss:' , score[0])
@@ -136,8 +135,7 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     model.fit(X_train, y_train,
           batch_size = batch_size,
           epochs = num_epochs,
-          verbose = 1,
-          validation_data = (X_val, y_val))
+          verbose = 1)
 
     score = model.evaluate(X_val, y_val, verbose=0)
     print('Validation loss:' , score[0])
