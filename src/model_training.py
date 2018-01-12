@@ -101,7 +101,7 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss=keras.losses.binary_crossentropy,
-              optimizer=keras.optimizers.SGD(lr=learning_rate),
+              optimizer=keras.optimizers.Adam(lr=learning_rate),
               metrics=['accuracy'])
 
     model.fit(X_train, y_train,
@@ -129,7 +129,7 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     model = VGG16(weights=None, input_shape=input_shape, classes=1)
 
     model.compile(loss=keras.losses.binary_crossentropy,
-              optimizer=keras.optimizers.SGD(lr=learning_rate),
+              optimizer=keras.optimizers.Adam(lr=learning_rate),
               metrics=['accuracy'])
 
     model.fit(X_train, y_train,
