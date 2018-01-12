@@ -153,7 +153,7 @@ def check_filepaths():
 def main(image_color_flag, training_size, num_epochs, batch_size, learning_rate, vgg):
     check_filepaths()
     filename = 'trees_temp/kerasmodel_' \
-                + str(training_size) + 'images_'
+                + str(training_size) + 'images_' \
                 + str(num_epochs) + 'epochs_' \
                 + str(batch_size) + 'batch_' \
                 + str(learning_rate) + 'lr' \
