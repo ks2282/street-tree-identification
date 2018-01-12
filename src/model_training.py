@@ -156,7 +156,7 @@ def main(image_color_flag, training_size, num_epochs, batch_size, learning_rate,
                 + str(training_size) + 'images_' \
                 + str(num_epochs) + 'epochs_' \
                 + str(batch_size) + 'batch_' \
-                + str(learning_rate) + 'lr' \
+                + str(learning_rate) + 'lr'
     if image_color_flag == 1: filename += '_RGB'
     X_train, y_train = get_data(image_color_flag, training_size)
     X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
