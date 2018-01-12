@@ -174,6 +174,6 @@ if __name__ == '__main__':
     training_size = int(sys.argv[2])
     num_epochs = int(sys.argv[3])
     batch_size = int(sys.argv[4])
-    learning_rate = int(sys.argv[5])
+    learning_rate = float(sys.argv[5])
     vgg = int(sys.argv[6])
     main(image_color_flag, training_size, num_epochs, batch_size, learning_rate, vgg)
