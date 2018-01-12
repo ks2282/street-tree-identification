@@ -118,6 +118,8 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
     print('Validation precision: ', precision)
     print('Validation recall: ', recall)
 
+    return model
+
 def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag, learning_rate):
     if image_color_flag == 0:
         input_shape = (100, 100, 1)
@@ -145,6 +147,8 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     print('Validation precision: ', precision)
     print('Validation recall: ', recall)
 
+    return model
+
 
 def check_filepaths():
     if not os.path.exists('trees_temp'):
@@ -161,12 +165,12 @@ def main(image_color_flag, training_size, num_epochs, batch_size, learning_rate,
     X_train, y_train = get_data(image_color_flag, training_size)
     X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
     if vgg == 1:
-        vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, \
-                    image_color_flag, learning_rate)
+        model = vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, \
+                            image_color_flag, learning_rate)
         filename += '_vgg'
     else:
-        nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, \
-                    image_color_flag, learning_rate)
+        model = nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, \
+                            image_color_flag, learning_rate)
     model.save(filename + '.h5')
 
 if __name__ == '__main__':
