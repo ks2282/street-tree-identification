@@ -83,7 +83,7 @@ def precision_recall(X, y, model):
 def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag):
     if image_color_flag == 0:
         input_shape = (100, 100, 1)
-    else input_shape = (100, 100, 3)
+    else: input_shape = (100, 100, 3)
     X_train = X_train.astype('float32')
     X_train /= 255
 
@@ -120,7 +120,7 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
 def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag):
     if image_color_flag == 0:
         input_shape = (100, 100, 1)
-    else input_shape = (100, 100, 3)
+    else: input_shape = (100, 100, 3)
     X_train = X_train.astype('float32')
     X_train /= 255
 
