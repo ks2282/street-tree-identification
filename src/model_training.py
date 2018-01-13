@@ -58,6 +58,12 @@ def get_data(image_color_flag, training_size):
     y_train = y_train.reshape(y_train.shape[0], 1)
     return X_train, y_train
 
+def standardize(X):
+    centers = X.mean(axis=(1,2))
+    stds = X.std(axis=(1,2))
+    X = np.array([(x - c) / d for x, c, d in zip(X, centers, stds)])
+    return X
+
 def train_val_split(X, y):
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size=0.3)
     return X_train, X_val, y_train, y_val
@@ -86,7 +92,7 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
         input_shape = (100, 100, 1)
     else: input_shape = (100, 100, 3)
     X_train = X_train.astype('float32')
-    X_train /= 255
+    #X_train /= 255
 
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(3, 3),
@@ -124,7 +130,7 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
         input_shape = (100, 100, 1)
     else: input_shape = (100, 100, 3)
     X_train = X_train.astype('float32')
-    X_train /= 255
+    #X_train /= 255
 
     model = VGG16(weights=None, input_shape=input_shape, classes=1)
 
@@ -161,6 +167,7 @@ def main(image_color_flag, training_size, num_epochs, batch_size, learning_rate,
                 + str(learning_rate) + 'lr'
     if image_color_flag == 1: filename += '_RGB'
     X_train, y_train = get_data(image_color_flag, training_size)
+    standardize(X_train)
     X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
     if vgg == 1:
         model = vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, \
