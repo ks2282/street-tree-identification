@@ -59,6 +59,11 @@ def get_data(image_color_flag, training_size):
     return X_train, y_train
 
 def standardize(X):
+    """Returns a standardized version of the input data
+
+    ARGUMENTS:
+    X (numpy array)
+    """
     centers = X.mean(axis=(1,2))
     stds = X.std(axis=(1,2))
     X = np.array([(x - c) / d for x, c, d in zip(X, centers, stds)])
@@ -132,7 +137,33 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     X_train = X_train.astype('float32')
     #X_train /= 255
 
-    model = VGG16(weights=None, input_shape=input_shape, classes=1)
+    #model = VGG16(weights=None, input_shape=input_shape, classes=1)
+
+    model = Sequential([
+        Conv2D(64, (3, 3), input_shape=input_shape, padding='same',
+               activation='relu'),
+        Conv2D(64, (3, 3), activation='relu', padding='same'),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+        Conv2D(128, (3, 3), activation='relu', padding='same'),
+        Conv2D(128, (3, 3), activation='relu', padding='same',),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+        Conv2D(256, (3, 3), activation='relu', padding='same',),
+        Conv2D(256, (3, 3), activation='relu', padding='same',),
+        Conv2D(256, (3, 3), activation='relu', padding='same',),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+        Conv2D(512, (3, 3), activation='relu', padding='same',),
+        Conv2D(512, (3, 3), activation='relu', padding='same',),
+        Conv2D(512, (3, 3), activation='relu', padding='same',),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+        Conv2D(512, (3, 3), activation='relu', padding='same',),
+        Conv2D(512, (3, 3), activation='relu', padding='same',),
+        Conv2D(512, (3, 3), activation='relu', padding='same',),
+        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
+        Flatten(),
+        #Dense(4096, activation='relu'),
+        #Dense(4096, activation='relu'),
+        Dense(1, activation='sigmoid')
+        ])
 
     model.compile(loss=keras.losses.binary_crossentropy,
               optimizer=keras.optimizers.Adam(lr=learning_rate),
