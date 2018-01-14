@@ -66,7 +66,7 @@ def standardize(X):
     """
     centers = np.mean(X, axis=(0, 1, 2))
     #stds = X.std(axis=(1,2))
-    X = X_train.astype('float32') - centers
+    X = X.astype('float32') - centers
     return X
 
 def train_val_split(X, y):
