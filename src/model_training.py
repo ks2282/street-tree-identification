@@ -1,7 +1,7 @@
 import os, sys
 import boto
 from boto.s3.key import Key
-from aws_functions import create_connection
+from src.aws_functions import create_connection
 import cv2
 import numpy as np
 from sklearn.model_selection import train_test_split
@@ -64,9 +64,9 @@ def standardize(X):
     ARGUMENTS:
     X (numpy array)
     """
-    centers = X.mean(axis=(1,2))
-    stds = X.std(axis=(1,2))
-    X = np.array([(x - c) / d for x, c, d in zip(X, centers, stds)])
+    centers = np.mean(X, axis=(0, 1, 2))
+    #stds = X.std(axis=(1,2))
+    X -= centers
     return X
 
 def train_val_split(X, y):
