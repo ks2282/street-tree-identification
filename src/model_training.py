@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten
-from keras.layers import Conv2D, MaxPooling2D
+from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D
 from keras import backend as K
 from keras.applications.vgg16 import VGG16
 
@@ -138,34 +138,50 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     #X_train /= 255
 
     #model = VGG16(weights=None, input_shape=input_shape, classes=1)
+    model = Sequential()
+    model.add(ZeroPadding2D((1, 1), input_shape=input_shape, data_format="channels_last"))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
-    model = Sequential([
-        Conv2D(64, (3, 3), input_shape=input_shape, padding='same',
-               activation='relu'),
-        Conv2D(64, (3, 3), activation='relu', padding='same'),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
-        Conv2D(128, (3, 3), activation='relu', padding='same'),
-        Conv2D(128, (3, 3), activation='relu', padding='same',),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
-        Conv2D(256, (3, 3), activation='relu', padding='same',),
-        Conv2D(256, (3, 3), activation='relu', padding='same',),
-        Conv2D(256, (3, 3), activation='relu', padding='same',),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
-        Conv2D(512, (3, 3), activation='relu', padding='same',),
-        Conv2D(512, (3, 3), activation='relu', padding='same',),
-        Conv2D(512, (3, 3), activation='relu', padding='same',),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
-        Conv2D(512, (3, 3), activation='relu', padding='same',),
-        Conv2D(512, (3, 3), activation='relu', padding='same',),
-        Conv2D(512, (3, 3), activation='relu', padding='same',),
-        MaxPooling2D(pool_size=(2, 2), strides=(2, 2)),
-        Flatten(),
-        Dense(4096, activation='relu'),
-        Dropout(0.5),
-        Dense(4096, activation='relu'),
-        Dropout(0.5),
-        Dense(1, activation='sigmoid')
-        ])
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(128, (3, 3), activation='relu'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(128, (3, 3), activation='relu'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(256, (3, 3), activation='relu'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(256, (3, 3), activation='relu'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(256, (3, 3), activation='relu'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(ZeroPadding2D((1, 1)))
+    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+
+    # Add Fully Connected Layer
+    model.add(Flatten())
+    #model.add(Dense(4096, activation='relu'))
+    #model.add(Dropout(0.5))
+    #model.add(Dense(4096, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss=keras.losses.binary_crossentropy,
               optimizer=keras.optimizers.Adam(lr=learning_rate),
