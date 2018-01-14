@@ -66,7 +66,7 @@ def standardize(X):
     """
     centers = np.mean(X, axis=(0, 1, 2))
     #stds = X.std(axis=(1,2))
-    X -= centers
+    X = X_train.astype('float32') - centers
     return X
 
 def train_val_split(X, y):
@@ -96,8 +96,6 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
     if image_color_flag == 0:
         input_shape = (100, 100, 1)
     else: input_shape = (100, 100, 3)
-    X_train = X_train.astype('float32')
-    #X_train /= 255
 
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(3, 3),
@@ -134,8 +132,6 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     if image_color_flag == 0:
         input_shape = (100, 100, 1)
     else: input_shape = (100, 100, 3)
-    X_train = X_train.astype('float32')
-    #X_train /= 255
 
     #model = VGG16(weights=None, input_shape=input_shape, classes=1)
     model = Sequential()
