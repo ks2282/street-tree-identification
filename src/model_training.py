@@ -176,7 +176,7 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     #model.add(Dense(4096, activation='relu'))
     #model.add(Dropout(0.5))
     #model.add(Dense(4096, activation='relu'))
-    model.add(Dropout(0.5))
+    model.add(Dropout(0.25))
     model.add(Dense(1, activation='sigmoid'))
 
     model.compile(loss=keras.losses.binary_crossentropy,
