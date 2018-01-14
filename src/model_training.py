@@ -1,7 +1,7 @@
 import os, sys
 import boto
 from boto.s3.key import Key
-from src.aws_functions import create_connection
+from .aws_functions import create_connection
 import cv2
 import numpy as np
 from sklearn.model_selection import train_test_split

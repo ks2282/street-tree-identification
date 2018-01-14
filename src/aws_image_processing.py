@@ -4,7 +4,7 @@ import pandas as pd
 import boto
 from boto.s3.key import Key
 from image_prep import ImageProcessor
-from aws_functions import create_connection, get_bucket_contents
+from .aws_functions import create_connection, get_bucket_contents
 
 def get_tree_data(destination, bucket):
     """Returns a dataframe with the street tree data.
