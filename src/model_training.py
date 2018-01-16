@@ -230,6 +230,7 @@ class TreeIDModel(object):
 
         self.history = self.model.fit(self.X_train, self.y_train,
                                       batch_size = self.batch_size,
+                                      validation_data=(self.X_val, self.y_val),
                                       epochs = self.num_epochs,
                                       verbose = 1)
 
