@@ -7,8 +7,9 @@ import numpy as np
 from sklearn.model_selection import train_test_split
 import keras
 from keras.models import Sequential
-from keras.layers import Dense, Dropout, Flatten
+from keras.layers import Dense, Dropout, Flatten, BatchNormalization
 from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D
+from keras.initializers import Constant
 from keras import backend as K
 from keras.applications.vgg16 import VGG16
 
@@ -84,13 +85,14 @@ def precision_recall(X, y, model):
     P = float(np.sum(y == 1))
     TP = float(np.sum((y_pred == 1) & (y == 1)))
     FP = float(np.sum((y_pred == 1) & (y == 0)))
+    accuracy = np.sum((y_pred == 1) == (y == 1))/y.shape[0]
     if np.sum(y_pred == 1) > 0:
         precision = TP/(TP + FP)
     else: precision = 'No predicted positives.'
     if P > 0:
         recall = TP/P
     else: recall = 'No positive labels in validation set.'
-    return precision, recall
+    return accuracy, precision, recall
 
 def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color_flag, learning_rate):
     if image_color_flag == 0:
@@ -100,14 +102,19 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
     model = Sequential()
     model.add(Conv2D(32, kernel_size=(3, 3),
                      activation='relu',
-                     input_shape=input_shape))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
+                     input_shape=input_shape,
+                     kernel_initializer='he_normal',
+                     bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
+    model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(MaxPooling2D(pool_size=(2, 2)))
     model.add(Dropout(0.25))
     model.add(Flatten())
-    model.add(Dense(128, activation='relu'))
+    model.add(Dense(128, activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(Dropout(0.25))
-    model.add(Dense(1, activation='sigmoid'))
+    model.add(Dense(1, activation='tanh', kernel_initializer='glorot_normal'))
 
     model.compile(loss=keras.losses.binary_crossentropy,
               optimizer=keras.optimizers.Adam(lr=learning_rate),
@@ -120,11 +127,12 @@ def nn_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_color
 
     score = model.evaluate(X_val, y_val, verbose=0)
     print('Validation loss:' , score[0])
-    print('Validation accuracy: ', score[1])
 
-    precision, recall = precision_recall(X_val, y_val, model)
+    accuracy, precision, recall = precision_recall(X_val, y_val, model)
+    print('Validation accuracy: ', accuracy)
     print('Validation precision: ', precision)
     print('Validation recall: ', recall)
+
 
     return model
 
@@ -136,39 +144,52 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     #model = VGG16(weights=None, input_shape=input_shape, classes=1)
     model = Sequential()
     model.add(ZeroPadding2D((1, 1), input_shape=input_shape, data_format="channels_last"))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(64, (3, 3), activation='relu'))
+    model.add(Conv2D(64, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(128, (3, 3), activation='relu'))
+    model.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(128, (3, 3), activation='relu'))
+    model.add(Conv2D(128, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(256, (3, 3), activation='relu'))
+    model.add(Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(256, (3, 3), activation='relu'))
+    model.add(Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(256, (3, 3), activation='relu'))
+    model.add(Conv2D(256, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(Conv2D(512, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(Conv2D(512, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(Conv2D(512, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(Conv2D(512, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(Conv2D(512, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(ZeroPadding2D((1, 1)))
-    model.add(Conv2D(512, (3, 3), activation='relu'))
+    model.add(Conv2D(512, (3, 3), activation='relu', kernel_initializer='he_normal', bias_initializer=Constant(0.01)))
+    model.add(BatchNormalization())
     model.add(MaxPooling2D((2, 2), strides=(2, 2)))
 
     # Add Fully Connected Layer
@@ -176,8 +197,8 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
     #model.add(Dense(4096, activation='relu'))
     #model.add(Dropout(0.5))
     #model.add(Dense(4096, activation='relu'))
-    model.add(Dropout(0.25))
-    model.add(Dense(1, activation='sigmoid'))
+    model.add(Dropout(0.5))
+    model.add(Dense(1, activation='tanh', kernel_initializer='glorot_normal'))
 
     model.compile(loss=keras.losses.binary_crossentropy,
               optimizer=keras.optimizers.Adam(lr=learning_rate),
@@ -190,9 +211,9 @@ def vgg_model(X_train, X_val, y_train, y_val, num_epochs, batch_size, image_colo
 
     score = model.evaluate(X_val, y_val, verbose=0)
     print('Validation loss:' , score[0])
-    print('Validation accuracy: ', score[1])
 
-    precision, recall = precision_recall(X_val, y_val, model)
+    accuracy, precision, recall = precision_recall(X_val, y_val, model)
+    print('Validation accuracy: ', accuracy)
     print('Validation precision: ', precision)
     print('Validation recall: ', recall)
 
