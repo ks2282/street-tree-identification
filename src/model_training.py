@@ -244,8 +244,8 @@ class TreeIDModel(object):
         """
         model_filename = 'trees_temp/model_' + self.metadata_string + '.h5'
         self.model.save(model_filename)
-        history_filename = 'trees_temp/hist_' + self.metadata_string + '.txt'
-        pickle.dump(self.history.history, open(history_filename + '.p', "wb" ))
+        history_filename = 'trees_temp/hist_' + self.metadata_string + '.p'
+        pickle.dump(self.history.history, open(history_filename, "wb" ))
 
 
 
