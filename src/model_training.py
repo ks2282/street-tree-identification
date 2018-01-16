@@ -1,8 +1,6 @@
-import os, sys
-import boto
+import os, sys, boto, pickle, numpy as np
 from boto.s3.key import Key
 from aws_functions import create_connection
-import numpy as np
 from sklearn.model_selection import train_test_split
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, BatchNormalization
@@ -247,10 +245,12 @@ class TreeIDModel(object):
         model_filename = 'trees_temp/model_' + self.metadata_string + '.h5'
         self.model.save(model_filename)
         history_filename = 'trees_temp/hist_' + self.metadata_string + '.txt'
+        pickle.dump(self.history.history, open(history_filename + '.p', "wb" ))
+
 
 
 def check_filepaths():
-    """
+    """Creates temporary local directory if it doesn't exist.
     """
     if not os.path.exists('trees_temp'):
         os.makedirs('trees_temp')
