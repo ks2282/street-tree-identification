@@ -1,4 +1,6 @@
 # Identifying Street Trees in Aerial Imagery
+Capstone Project, Galvanize San Francisco
+Kristie Sarkar
 
 ## Background
 
@@ -10,15 +12,13 @@
 
 ## Next Steps
 
-## Folder Structure
+## Files in 'src' Folder
 
-### src folder:
-1. aws_functions.py:
-2. aws_image_processing.py
-3. image_prep.py
-4. model_training.py
-5. preprocessing.py
-6. training_data_prep.py
+1. aws_functions.py: Functions for connecting to AWS and retrieving information
+2. aws_image_processing.py: Scripts for retrieving data, processing images, and loading data back to S3.
+3. image_prep.py: ImageProcessor class for taking an image, generating subimages, and assigning a label to each subimage.
+4. model_training.py: Script for retrieving and preprocessing the labeled data, and TreeIDModel class for modeling the data set.
+5. training_data_prep.py: Script for converting subimages into arrays, splitting into test/train sets, and loading compressed numpy arrays back to S3.
 
 ## References
 
