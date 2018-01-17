@@ -10,10 +10,14 @@ from keras.optimizers import Adam
 from keras.initializers import Constant
 
 def restore_matrices(npz_filepath):
-    """Returns training and test data as numpy arrays
+    """Returns training and test data as numpy arrays.
 
     ARGUMENTS:
     npz_filepath (string)
+
+    RETURNS:
+    (array, array, array, array): (training features, testing features,
+                                   training labels, testing labels)
     """
     X_train = np.load(npz_filepath)['arr_0']
     X_test = np.load(npz_filepath)['arr_1']
@@ -22,21 +26,24 @@ def restore_matrices(npz_filepath):
     return X_train, X_test, y_train, y_test
 
 def download_s3_data(filename):
-    """Downloads npz file from s3
+    """Downloads npz file from s3 to the 'trees_temp' directory.
 
     ARGUMENTS:
-    - filename
+    - filename (string): name of file to retrieve from S3 bucket
     """
     conn, bucket = create_connection('treedata-ks')
     key = bucket.get_key('test_train_data/' + filename)
     key.get_contents_to_filename('trees_temp/' + filename)
 
 def get_data(num_channels, training_size):
-    """Checks if data is local, downloads if not
+    """Checks if data is local, downloads if not.
 
     ARGUMENTS:
     - num_channels (int): specifies whether to find grayscale (1) or color (3)
     - training_size (int): limits amount of data to train
+
+    RETURNS:
+    (array, array): (features, labels)
     """
     if num_channels == 1:
         filename = 'test_train_data.npz'
@@ -53,17 +60,28 @@ def get_data(num_channels, training_size):
     return X_train, y_train
 
 def standardize(X):
-    """Returns a standardized version of the input data
+    """Returns a standardized version of the input data.
 
     ARGUMENTS:
-    X (numpy array)
+    X (array): feature data
+
+    RETURNS:
+    (array): centered feature data
     """
     centers = np.mean(X, axis=(0, 1, 2))
     X = X.astype('float32') - centers
     return X
 
 def train_val_split(X, y):
-    """
+    """Returns training and validation data.
+
+    ARGUMENTS:
+    X (array): feature data
+    y (array): label data
+
+    RETURNS:
+    (array, array, array, array): (training features, validation features,
+                                   training labels, validation labels)
     """
     X_train, X_val, y_train, y_val = train_test_split(X, y, test_size = 0.3)
     return X_train, X_val, y_train, y_val
@@ -73,7 +91,16 @@ class TreeIDModel(object):
     """
     def __init__(self, X_train, X_val, y_train, y_val, num_epochs,
                  batch_size=32, learning_rate=0.00001):
-        """
+        """Initializes data and parameters for training a neural network.
+
+        ARGUMENTS:
+        - X_train (array): features of training data
+        - X_val (array): features of validation data
+        - y_train (array): labels for training data
+        - y_val (array): labels for validation data
+        - num_epochs (int): number of epochs for training model
+        - batch_size (int): size of batch for training model
+        - learning_rate (float): optimizer learning rate for training model
         """
         self.X_train = X_train
         self.X_val = X_val
@@ -132,7 +159,7 @@ class TreeIDModel(object):
         print(data_label + ' recall: ', recall, '\n')
 
     def nn_model(self):
-        """
+        """Runs a simple model, based on the MNIST example from Keras.
         """
         self.model = Sequential()
         self.model.add(Conv2D(32, kernel_size=(3, 3),
@@ -178,7 +205,8 @@ class TreeIDModel(object):
         self.model.add(BatchNormalization())
 
     def vgg_model(self):
-        """
+        """Runs modified version of VGG16 model. First two fully connected layer
+        removed, and batch normalization added between layers.
         """
         self.model = Sequential()
         self.model.add(ZeroPadding2D((1, 1), input_shape=self.input_shape,
@@ -249,16 +277,23 @@ class TreeIDModel(object):
         pickle.dump(self.history.history, open(history_filename, "wb" ))
 
 
-
 def check_filepaths():
     """Creates temporary local directory if it doesn't exist.
     """
     if not os.path.exists('trees_temp'):
         os.makedirs('trees_temp')
 
-def main(num_channels, training_size, num_epochs, batch_size,
-         learning_rate, vgg_flag):
-    """
+def main(num_channels, training_size, num_epochs, batch_size, learning_rate,
+         vgg_flag):
+    """Sets up data and runs model. Saves model and epoch history locally.
+
+    ARGUMENTS:
+    - num_channels (int): specifies whether to find grayscale (1) or color (3)
+    - training_size (int): limits amount of data to train
+    - num_epochs (int): number of epochs for training model
+    - batch_size (int): size of batch for training model
+    - learning_rate (float): optimizer learning rate for training model
+    - vgg_flag (int): specifies whether to run simple (0) or deep (1) model
     """
     check_filepaths()
 
