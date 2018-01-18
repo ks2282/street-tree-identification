@@ -1,5 +1,5 @@
 # Identifying Street Trees in Aerial Imagery
-Capstone Project, Galvanize San Francisco
+Capstone Project, Galvanize San Francisco 
 Kristie Sarkar
 
 ## Background

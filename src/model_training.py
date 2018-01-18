@@ -135,20 +135,20 @@ class TreeIDModel(object):
         score = self.model.evaluate(X, y, verbose=0)
         print(data_label + ' loss:' , score[0])
 
-        y_pred = self.model.predict(X).round()
+        y_pred = self.model.predict(X)
 
-        accuracy = np.sum((y_pred == 1) == (y == 1))/y.shape[0]
+        accuracy = np.sum((y_pred >= 0) == (y == 1))/y.shape[0]
         print(data_label + ' accuracy: ', accuracy)
 
-        TP = float(np.sum((y_pred == 1) & (y == 1)))
-        FN = float(np.sum((y_pred != 1) & (y == 1)))
-        FP = float(np.sum((y_pred == 1) & (y != 1)))
-        TN = float(np.sum((y_pred != 1) & (y != 1)))
+        TP = float(np.sum((y_pred  >= 0) & (y == 1)))
+        FN = float(np.sum((y_pred < 0) & (y == 1)))
+        FP = float(np.sum((y_pred >= 0) & (y != 1)))
+        TN = float(np.sum((y_pred < 0) & (y != 1)))
         print(data_label + ' confusion matrix')
         print('     (TP, FN): ', (TP, FN))
         print('     (FP, TN): ', (FP, TN))
 
-        if np.sum(y_pred == 1) > 0:
+        if np.sum(y_pred >= 0) > 0:
             precision = TP/(TP + FP)
         else: precision = 'No predicted positives.'
         print(data_label + ' precision: ', precision)
