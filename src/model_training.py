@@ -137,18 +137,18 @@ class TreeIDModel(object):
 
         y_pred = self.model.predict(X)
 
-        accuracy = np.sum((y_pred >= 0) == (y == 1))/y.shape[0]
+        accuracy = np.sum((y_pred >= 0.5) == (y == 1))/y.shape[0]
         print(data_label + ' accuracy: ', accuracy)
 
-        TP = float(np.sum((y_pred  >= 0) & (y == 1)))
-        FN = float(np.sum((y_pred < 0) & (y == 1)))
-        FP = float(np.sum((y_pred >= 0) & (y != 1)))
-        TN = float(np.sum((y_pred < 0) & (y != 1)))
+        TP = float(np.sum((y_pred  >= 0.5) & (y == 1)))
+        FN = float(np.sum((y_pred < 0.5) & (y == 1)))
+        FP = float(np.sum((y_pred >= 0.5) & (y != 1)))
+        TN = float(np.sum((y_pred < 0.5) & (y != 1)))
         print(data_label + ' confusion matrix')
         print('     (TP, FN): ', (TP, FN))
         print('     (FP, TN): ', (FP, TN))
 
-        if np.sum(y_pred >= 0) > 0:
+        if np.sum(y_pred >= 0.5) > 0:
             precision = TP/(TP + FP)
         else: precision = 'No predicted positives.'
         print(data_label + ' precision: ', precision)
@@ -180,7 +180,7 @@ class TreeIDModel(object):
                              bias_initializer=Constant(0.01)))
         self.model.add(BatchNormalization())
         self.model.add(Dropout(0.25))
-        self.model.add(Dense(1, activation='tanh',
+        self.model.add(Dense(1, activation='sigmoid',
                              kernel_initializer='glorot_normal'))
 
         self.model.compile(loss=binary_crossentropy,
@@ -249,7 +249,7 @@ class TreeIDModel(object):
         # Add Fully Connected Layer
         self.model.add(Flatten())
         self.model.add(Dropout(0.5))
-        self.model.add(Dense(1, activation='tanh',
+        self.model.add(Dense(1, activation='sigmoid',
                              kernel_initializer='glorot_normal'))
 
         self.model.compile(loss=binary_crossentropy,
