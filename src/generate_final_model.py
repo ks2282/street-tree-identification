@@ -67,7 +67,7 @@ def main():
     X_train, X_test, y_train, y_test = get_data(3, 141750)
     X_train, X_test = standardize_test_train(X_train, X_test)
     final_model = TreeIDModel(X_train, y_train, num_epochs=15, batch_size=32,
-                              learning_rate=0.00001, alpah=0)
+                              learning_rate=0.00001, alpha=0)
     final_model.vgg_model()
     y_pred = predict_test(final_model, X_test, y_test)
     save_data(final_model, X_test, y_test, y_pred)
