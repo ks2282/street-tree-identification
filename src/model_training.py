@@ -111,13 +111,13 @@ class TreeIDModel(object):
         - alpha (float): parameter for L2 regularization in VGG Conv2D layers
         """
         self.X_train = X_train
-        self.X_val = X_val
+        #self.X_val = X_val
         self.y_train = y_train
-        self.y_val = y_val
+        #self.y_val = y_val
 
         self.num_channels = self.X_train.shape[3]
         self.input_shape = (100, 100, self.num_channels)
-        self.training_size = self.X_train.shape[0] + self.X_val.shape[0]
+        self.training_size = self.X_train.shape[0] #+ self.X_val.shape[0]
         self.num_epochs = num_epochs
         self.batch_size = batch_size
         self.learning_rate = learning_rate
