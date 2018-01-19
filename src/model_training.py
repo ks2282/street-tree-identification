@@ -61,7 +61,9 @@ def get_data(num_channels, training_size):
     y_train = y_train[:training_size]
     X_train = X_train.reshape(X_train.shape[0], 100, 100, num_channels)
     y_train = y_train.reshape(y_train.shape[0], 1)
-    return X_train, y_train
+    X_test = X_test.reshape(X_test.shape[0], 100, 100, num_channels)
+    y_test = y_test.reshape(y_test.shape[0], 1)
+    return X_train, X_test, y_train, y_test
 
 def standardize(X):
     """Returns a standardized version of the input data.
@@ -307,7 +309,7 @@ def main(num_channels, training_size, num_epochs, batch_size, learning_rate,
     """
     check_filepaths()
 
-    X_train, y_train = get_data(num_channels, training_size)
+    X_train, X_test, y_train, y_test = get_data(num_channels, training_size)
     standardize(X_train)
     X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
 
