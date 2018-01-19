@@ -1,3 +1,9 @@
+"""
+The ImageProcessor class below is used to split an image into subimages, and
+saves each subimage in a directory depending on it's labeled class.
+ImageProcessor is imported in the aws_image_processing.py script for splitting
+and labeling all images contained in a specified S3 bucket.
+"""
 from PIL import Image
 import pandas as pd
 import numpy as np
@@ -81,9 +87,9 @@ class ImageProcessor(object):
         - subimage_SE (tuple of floats): subimage southeast coordinates
         """
         subimage_NW = (self.image_NW[0] + row*coord_step[0],
-                        self.image_NW[1] + column*coord_step[1])
+                       self.image_NW[1] + column*coord_step[1])
         subimage_SE = (self.image_NW[0] + (row+1)*coord_step[0],
-                        self.image_NW[1] + (column+1)*coord_step[1])
+                       self.image_NW[1] + (column+1)*coord_step[1])
         return subimage_NW, subimage_SE
 
     def _contains_tree(self, tree_data, subimage_NW, subimage_SE):

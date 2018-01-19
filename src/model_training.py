@@ -1,3 +1,6 @@
+"""
+Validation data has been commented out as model has been selected.
+"""
 import os, sys, boto, pickle, numpy as np
 from boto.s3.key import Key
 from aws_functions import create_connection
@@ -90,8 +93,9 @@ def train_val_split(X, y):
 class TreeIDModel(object):
     """
     """
-    def __init__(self, X_train, X_val, y_train, y_val, num_epochs,
-                 batch_size=32, learning_rate=0.00001, alpha=0):
+    def __init__(self, X_train, #X_val,
+                 y_train, #y_val,
+                 num_epochs, batch_size=32, learning_rate=0.00001, alpha=0):
         """Initializes data and parameters for training a neural network.
 
         ARGUMENTS:
@@ -263,12 +267,12 @@ class TreeIDModel(object):
 
         self.history = self.model.fit(self.X_train, self.y_train,
                                       batch_size = self.batch_size,
-                                      validation_data=(self.X_val, self.y_val),
+                                      #validation_data=(self.X_val, self.y_val),
                                       epochs = self.num_epochs,
                                       verbose = 1)
 
         self.validation_metrics(self.X_train, self.y_train, 'training')
-        self.validation_metrics(self.X_val, self.y_val, 'validation')
+        #self.validation_metrics(self.X_val, self.y_val, 'validation')
 
         self.metadata_string += '_VGG'
         self.vgg_flag = 0
