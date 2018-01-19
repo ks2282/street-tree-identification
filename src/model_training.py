@@ -8,6 +8,7 @@ from keras.layers import Conv2D, MaxPooling2D, ZeroPadding2D
 from keras.losses import binary_crossentropy
 from keras.optimizers import Adam
 from keras.initializers import Constant
+from keras.regularizers import l2
 
 def restore_matrices(npz_filepath):
     """Returns training and test data as numpy arrays.
@@ -90,7 +91,7 @@ class TreeIDModel(object):
     """
     """
     def __init__(self, X_train, X_val, y_train, y_val, num_epochs,
-                 batch_size=32, learning_rate=0.00001):
+                 batch_size=32, learning_rate=0.00001, alpha=0):
         """Initializes data and parameters for training a neural network.
 
         ARGUMENTS:
@@ -114,6 +115,7 @@ class TreeIDModel(object):
         self.batch_size = batch_size
         self.learning_rate = learning_rate
         self.vgg_flag = 0
+        self.alpha = alpha
         self.metadata_string = self.get_metadata_string()
 
         self.model = None
@@ -125,7 +127,8 @@ class TreeIDModel(object):
         metadata_string = str(self.training_size) + 'images_' + \
                           str(self.num_epochs) + 'epochs_' + \
                           str(self.batch_size) + 'batch_' + \
-                          str(self.learning_rate) + 'lr'
+                          str(self.learning_rate) + 'lr_' + \
+                          str(self.alpha) + 'reg'
         if self.num_channels == 3: metadata_string += '_RGB'
         return metadata_string
 
@@ -201,7 +204,8 @@ class TreeIDModel(object):
         """
         self.model.add(Conv2D(num_filters, (3, 3), activation='relu',
                               kernel_initializer='he_normal',
-                              bias_initializer=Constant(0.01)))
+                              bias_initializer=Constant(0.01),
+                              kernel_regularizer=l2(self.alpha)))
         self.model.add(BatchNormalization())
 
     def vgg_model(self):
@@ -284,7 +288,7 @@ def check_filepaths():
         os.makedirs('trees_temp')
 
 def main(num_channels, training_size, num_epochs, batch_size, learning_rate,
-         vgg_flag):
+         vgg_flag, alpha):
     """Sets up data and runs model. Saves model and epoch history locally.
 
     ARGUMENTS:
@@ -302,7 +306,7 @@ def main(num_channels, training_size, num_epochs, batch_size, learning_rate,
     X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
 
     treeID = TreeIDModel(X_train, X_val, y_train, y_val, num_epochs, batch_size,
-                         learning_rate)
+                         learning_rate, alpha)
     if vgg_flag == 1:
         treeID.vgg_model()
     else:
@@ -316,5 +320,6 @@ if __name__ == '__main__':
     batch_size = int(sys.argv[4])
     learning_rate = float(sys.argv[5])
     vgg_flag = int(sys.argv[6])
+    alpha = int(sys.argv[7])
     main(num_channels, training_size, num_epochs, batch_size,
-         learning_rate, vgg_flag)
+         learning_rate, vgg_flag, alpha)

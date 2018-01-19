@@ -1,5 +1,5 @@
 # Identifying Street Trees in Aerial Imagery
-Capstone Project, Galvanize San Francisco 
+Capstone Project, Galvanize San Francisco
 Kristie Sarkar
 
 ## Background
@@ -31,4 +31,4 @@ Kristie Sarkar
 2. VGG paper: https://arxiv.org/pdf/1409.1556.pdf
 
 ### Helpful Resources:
-1. Stanford lecture on training neural networks: http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture6.pdf
+1. Stanford lecture on training neural networks: http://cs231n.stanford.edu/slides/2017/cs231n_2017_lecture6.pdf\
