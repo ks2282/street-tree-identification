@@ -102,6 +102,7 @@ class TreeIDModel(object):
         - num_epochs (int): number of epochs for training model
         - batch_size (int): size of batch for training model
         - learning_rate (float): optimizer learning rate for training model
+        - alpha (float): parameter for L2 regularization in VGG Conv2D layers
         """
         self.X_train = X_train
         self.X_val = X_val
@@ -298,6 +299,7 @@ def main(num_channels, training_size, num_epochs, batch_size, learning_rate,
     - batch_size (int): size of batch for training model
     - learning_rate (float): optimizer learning rate for training model
     - vgg_flag (int): specifies whether to run simple (0) or deep (1) model
+    - alpha (float): parameter for L2 regularization in VGG Conv2D layers
     """
     check_filepaths()
 
@@ -320,6 +322,6 @@ if __name__ == '__main__':
     batch_size = int(sys.argv[4])
     learning_rate = float(sys.argv[5])
     vgg_flag = int(sys.argv[6])
-    alpha = int(sys.argv[7])
+    alpha = float(sys.argv[7])
     main(num_channels, training_size, num_epochs, batch_size,
          learning_rate, vgg_flag, alpha)
