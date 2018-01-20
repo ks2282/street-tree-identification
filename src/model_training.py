@@ -95,8 +95,8 @@ def train_val_split(X, y):
 class TreeIDModel(object):
     """
     """
-    def __init__(self, X_train, #X_val,
-                 y_train, #y_val,
+    def __init__(self, X_train, X_val,
+                 y_train, y_val,
                  num_epochs, batch_size=32, learning_rate=0.00001, alpha=0):
         """Initializes data and parameters for training a neural network.
 
@@ -111,13 +111,13 @@ class TreeIDModel(object):
         - alpha (float): parameter for L2 regularization in VGG Conv2D layers
         """
         self.X_train = X_train
-        #self.X_val = X_val
+        self.X_val = X_val
         self.y_train = y_train
-        #self.y_val = y_val
+        self.y_val = y_val
 
         self.num_channels = self.X_train.shape[3]
         self.input_shape = (100, 100, self.num_channels)
-        self.training_size = self.X_train.shape[0] #+ self.X_val.shape[0]
+        self.training_size = self.X_train.shape[0] + self.X_val.shape[0]
         self.num_epochs = num_epochs
         self.batch_size = batch_size
         self.learning_rate = learning_rate
@@ -226,12 +226,14 @@ class TreeIDModel(object):
         self.model.add(ZeroPadding2D((1, 1)))
         self.add_convolutional_layer(64)
         self.model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+        self.model.add(Dropout(0.25))
 
         self.model.add(ZeroPadding2D((1, 1)))
         self.add_convolutional_layer(128)
         self.model.add(ZeroPadding2D((1, 1)))
         self.add_convolutional_layer(128)
         self.model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+        self.model.add(Dropout(0.25))
 
         self.model.add(ZeroPadding2D((1, 1)))
         self.add_convolutional_layer(256)
@@ -240,6 +242,7 @@ class TreeIDModel(object):
         self.model.add(ZeroPadding2D((1, 1)))
         self.add_convolutional_layer(256)
         self.model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+        self.model.add(Dropout(0.25))
 
         self.model.add(ZeroPadding2D((1, 1)))
         self.add_convolutional_layer(512)
@@ -248,6 +251,7 @@ class TreeIDModel(object):
         self.model.add(ZeroPadding2D((1, 1)))
         self.add_convolutional_layer(512)
         self.model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+        self.model.add(Dropout(0.25))
 
         self.model.add(ZeroPadding2D((1, 1)))
         self.add_convolutional_layer(512)
@@ -256,10 +260,11 @@ class TreeIDModel(object):
         self.model.add(ZeroPadding2D((1, 1)))
         self.add_convolutional_layer(512)
         self.model.add(MaxPooling2D((2, 2), strides=(2, 2)))
+        self.model.add(Dropout(0.25))
 
         # Add Fully Connected Layer
         self.model.add(Flatten())
-        self.model.add(Dropout(0.5))
+        #self.model.add(Dropout(0.5))
         self.model.add(Dense(1, activation='sigmoid',
                              kernel_initializer='glorot_normal'))
 
@@ -269,12 +274,12 @@ class TreeIDModel(object):
 
         self.history = self.model.fit(self.X_train, self.y_train,
                                       batch_size = self.batch_size,
-                                      #validation_data=(self.X_val, self.y_val),
+                                      validation_data=(self.X_val, self.y_val),
                                       epochs = self.num_epochs,
                                       verbose = 1)
 
         self.validation_metrics(self.X_train, self.y_train, 'training')
-        #self.validation_metrics(self.X_val, self.y_val, 'validation')
+        self.validation_metrics(self.X_val, self.y_val, 'validation')
 
         self.metadata_string += '_VGG'
         self.vgg_flag = 0
