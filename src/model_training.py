@@ -1,5 +1,5 @@
 """
-Validation data has been commented out as model has been selected.
+Validation will be commented out as model has been selected.
 """
 import os, sys, boto, pickle, numpy as np
 from boto.s3.key import Key
