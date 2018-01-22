@@ -12,6 +12,7 @@ from keras.losses import binary_crossentropy
 from keras.optimizers import Adam
 from keras.initializers import Constant
 from keras.regularizers import l2
+from keras.callbacks import ModelCheckpoint
 
 def restore_matrices(npz_filepath):
     """Returns training and test data as numpy arrays.
@@ -271,6 +272,9 @@ class TreeIDModel(object):
         self.model.compile(loss=binary_crossentropy,
                            optimizer=Adam(lr=self.learning_rate),
                            metrics=['accuracy'])
+
+        checkpointer = ModelCheckpoint(filepath='/tmp/weights.hdf5', verbose=1,
+                                       save_best_only=True)
 
         self.history = self.model.fit(self.X_train, self.y_train,
                                       batch_size = self.batch_size,
