@@ -1,12 +1,13 @@
 # Identifying Street Trees in Aerial Imagery
-Capstone Project, Galvanize San Francisco
-Kristie Sarkar
+Capstone Project by Kristie Sarkar (Galvanize San Francisco)
 
 ## Motivation
 Street trees make a huge difference for my enjoyment of a walk or run, and take a lot of effort from municipalities to maintain. The ultimate goal of this project is to create something that can help cities survey and maintain trees. I also hope to personally use the output to help me plan more scenic long runs and get me out the door in my running shoes more often.
 
 ## Data Preparation
-
+1. The 81 high-resolution aerial images of San Francisco from USGS were divided into 2,500 subimages each.
+2. Each subimage was labeled as either containing a street tree or not containing a street tree, by comparing the bounding geocodes of each subimage to the list of San Francisco street trees from the Department of Public Works.
+3. Data was kept as color (RGB), and standardized by subtracting the mean RGB values of the entire training data set from each pixel of each image.
 
 ## Model Specifications
 
@@ -29,8 +30,14 @@ The model used is based on the VGG16 convolutional neural network architecture. 
   - EC2 GPU for model training
 
 ## Next Steps
+- Improve data quality
+- Detect street trees in imagery from other cities
+- Time-series analyses
+  - Detect tree health issues
+  - Predict floral blooms (and plan my runs to them)
+- Classify species from imagery
 
-## Files in 'src' Folder
+## Code Files
 
 - [aws_functions](https://github.com/ks2282/street-tree-identification/blob/master/src/aws_functions.py): Functions for connecting to AWS and retrieving information
 - [aws_image_processing](https://github.com/ks2282/street-tree-identification/blob/master/src/aws_image_processing.py): Scripts for retrieving data, processing images, and loading data back to S3.
