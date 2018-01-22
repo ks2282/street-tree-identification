@@ -32,11 +32,13 @@ The model used is based on the VGG16 convolutional neural network architecture. 
 
 ## Files in 'src' Folder
 
-- aws_functions.py: Functions for connecting to AWS and retrieving information
-- aws_image_processing.py: Scripts for retrieving data, processing images, and loading data back to S3.
-- image_prep.py: ImageProcessor class for taking an image, generating subimages, and assigning a label to each subimage.
-- model_training.py: Script for retrieving and preprocessing the labeled data, and TreeIDModel class for modeling the data set.
-- training_data_prep.py: Script for converting subimages into arrays, splitting into test/train sets, and loading compressed numpy arrays back to S3.
+- [aws_functions](https://github.com/ks2282/street-tree-identification/blob/master/src/aws_functions.py): Functions for connecting to AWS and retrieving information
+- [aws_image_processing](https://github.com/ks2282/street-tree-identification/blob/master/src/aws_image_processing.py): Scripts for retrieving data, processing images, and loading data back to S3.
+- [image_prep](https://github.com/ks2282/street-tree-identification/blob/master/src/image_prep.py): ImageProcessor class for taking an image, generating subimages, and assigning a label to each subimage.
+- [training_data_prep](https://github.com/ks2282/street-tree-identification/blob/master/src/training_data_prep.py): Script for converting subimages into arrays, splitting into test/train sets, and loading compressed numpy arrays back to S3.
+- [model_training](https://github.com/ks2282/street-tree-identification/blob/master/src/model_training.py): Script for retrieving and preprocessing the labeled data, and TreeIDModel class for modeling the data set.
+- [generate_final_model](https://github.com/ks2282/street-tree-identification/blob/master/src/generate_final_model.py): Script for generating final model using parameters selected through validation process.
+
 
 ## References
 
