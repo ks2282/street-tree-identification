@@ -25,8 +25,8 @@ The model used is based on the VGG16 convolutional neural network architecture. 
 - Keras with TensorFlow Backend
 - OpenCV (computer vision package)
 - Amazon Web Services
-- S3 for data storage
-- EC2 GPU for model training
+ - S3 for data storage
+ - EC2 GPU for model training
 
 ## Next Steps
 
