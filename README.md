@@ -2,13 +2,31 @@
 Capstone Project, Galvanize San Francisco
 Kristie Sarkar
 
-## Background
+## Motivation
+Street trees make a huge difference for my enjoyment of a walk or run, and take a lot of effort from municipalities to maintain. The ultimate goal of this project is to create something that can help cities survey and maintain trees. I also hope to personally use the output to help me plan more scenic long runs and get me out the door in my running shoes more often.
 
 ## Data Preparation
 
+
 ## Model Specifications
 
+The model used is based on the VGG16 convolutional neural network architecture. A few modifications were made to fit the nature of the data, allow the model to train, and prevent overfitting the model to the training data.
+
+- 13 convolutional layers with zero padding
+- Batch Normalization after each convolutional layer
+- Dropout after each block of convolutional layers
+- One fully connected layer with Sigmoid output functions
+- Binary cross-entropy loss function
+
 ## Results
+
+## Technology Used
+- Python
+- Keras with TensorFlow Backend
+- OpenCV (computer vision package)
+- Amazon Web Services
+-- S3 for data storage
+-- EC2 GPU for model training
 
 ## Next Steps
 
