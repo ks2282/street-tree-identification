@@ -281,7 +281,8 @@ class TreeIDModel(object):
                                       batch_size = self.batch_size,
                                       validation_data=(self.X_val, self.y_val),
                                       epochs = self.num_epochs,
-                                      verbose = 1)
+                                      verbose = 1,
+                                      callbacks=[checkpointer])
 
         self.validation_metrics(self.X_train, self.y_train, 'training')
         self.validation_metrics(self.X_val, self.y_val, 'validation')
