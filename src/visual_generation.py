@@ -92,11 +92,9 @@ def get_prediction_visual(df, img, model, centers):
             right = 100*(column+1)
             standardized_img = img[top:bottom,left:right,:] - centers
             prediction = model.predict(standardized_img.reshape(1, 100, 100, 3))[0, 0]
-            print(row, column)
-            index = df[(df['row']==row) & (df['column']==column)].index[0]
-            print(index)
-            df.iloc[index].prediction = prediction
-            df.iloc[index].pred_round = round(prediction)
+            index = df[(df['row']==row) & (df['column']==column)].index
+            df.prediction.iloc[index] = prediction
+            df.pred_round.iloc[index] = round(prediction)
             if round(prediction) == 1:
                 img[top:bottom,left:right,1] = \
                     (255-img[top:bottom,left:right,1])*.75 + \
