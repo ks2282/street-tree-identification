@@ -1,13 +1,11 @@
 """
-Generates model using specified parameters, using all training data (no
-validation holdout). This script should only be used after model parameters
-have been tuned with different parameters.
+Predicts test data using final model and saves output. This script should only
+be used after final model has been created and saved.
 """
-from model_training import get_data, TreeIDModel
-import numpy as np
-import pickle
+from model_training import get_data
+import keras, pickle, numpy as np
 
-def standardize_test_train(X_train, X_test):
+def standardize_test_data(X_train, X_test):
     """Returns a standardized version of the input data.
 
     ARGUMENTS:
@@ -15,12 +13,11 @@ def standardize_test_train(X_train, X_test):
     X_test (array): feature data for test set
 
     RETURNS:
-    (array, array): centered feature data for (X_train, X_test)
+    (array): centered feature data for (X_test)
     """
     centers = np.mean(X_train, axis=(0, 1, 2))
-    X_train = X_train.astype('float32') - centers
     X_test = X_test.astype('float32') - centers
-    return X_train, X_test
+    return X_test
 
 def predict_test(model, X_test, y_test):
     """
@@ -54,23 +51,12 @@ def predict_test(model, X_test, y_test):
 
     return y_pred
 
-def save_data(model, X_test, y_test, y_pred):
-    """Saves model and history to files.
-    """
-    model_filename = 'trees_temp/final_model_' + model.metadata_string + '.h5'
-    final_model.model.save(model_filename)
-    history_filename = 'trees_temp/final_hist_' + model.metadata_string + '.p'
-    pickle.dump(final_model.history.history, open(history_filename, "wb" ))
-    np.savez_compressed('trees_temp/test_X-y-pred', X_test, y_test, y_pred)
-
 def main():
     X_train, X_test, y_train, y_test = get_data(3, 141750)
-    X_train, X_test = standardize_test_train(X_train, X_test)
-    final_model = TreeIDModel(X_train, y_train, num_epochs=15, batch_size=32,
-                              learning_rate=0.00001, alpha=0)
-    final_model.vgg_model()
-    y_pred = predict_test(final_model, X_test, y_test)
-    save_data(final_model, X_test, y_test, y_pred)
+    X_test = standardize_test_data(X_train, X_test)
+    model = keras.models.load_model(model_filepath)
+    y_pred = predict_test(model, X_test, y_test)
+    np.savez_compressed('trees_temp/test_X-y-pred', X_test, y_test, y_pred)
 
 if __name__ == '__main__':
     main()
