@@ -52,12 +52,12 @@ def get_metadata_dataframe(tree_subset, no_tree_subset):
         df.iloc[len(tree_subset) + i] = [name, row, column, 0, None, None]
     return df
 
-def get_label_visual(subimage_info, img):
+def get_label_visual(df, img):
     """Generates and saves a visual highlighting areas identified as containing
     street trees.
 
     ARGUMENTS:
-    - subimage_info (dataframe)
+    - df (dataframe)
     - img (array): image file
     """
     for row in range(50):
@@ -67,8 +67,7 @@ def get_label_visual(subimage_info, img):
             left = 100*column
             right =100*(column+1)
             subimg = img[top:bottom,left:right,:]
-            label = tree_sub_df[(tree_sub_df['row']==row) & \
-                                (tree_sub_df['column']==column)].label.max()
+            label = df[(df['row']==row) & (df['column']==column)].label.max()
             if label == 1:
                 img[top:bottom,left:right,1] = \
                     (255-img[top:bottom,left:right,1])*.75 + \
