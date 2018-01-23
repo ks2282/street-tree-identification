@@ -11,7 +11,7 @@ Street trees make a huge difference for my enjoyment of a walk or run, and take 
 
 ## Model Specifications
 
-The model used is based on the VGG16 convolutional neural network architecture. A few modifications were made to fit the nature of the data, allow the model to train, and prevent overfitting the model to the training data.
+The model used is based on the VGG16 convolutional neural network architecture, a well-regarded framework for image recognition. A few modifications were made to fit the nature of the data, allow the model to train, and prevent overfitting the model to the training data.
 
 - 13 convolutional layers with zero padding
 - Batch Normalization after each convolutional layer
