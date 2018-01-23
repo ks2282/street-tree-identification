@@ -42,7 +42,7 @@ def predict_test(model, X_test, y_test):
     if np.sum(y_pred >= 0.5) > 0:
         precision = TP/(TP + FP)
     else: precision = 'No predicted positives.'
-    print(data_label + 'test precision: ', precision)
+    print('test precision: ', precision)
 
     if np.sum(y == 1) > 0:
         recall = TP/(TP + FN)
