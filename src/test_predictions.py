@@ -23,10 +23,10 @@ def predict_test(model, X_test, y_test):
     """
 
     """
-    score = final_model.model.evaluate(X_test, y_test, verbose=0)
+    score = model.evaluate(X_test, y_test, verbose=0)
     print('test loss:' , score[0])
 
-    y_pred = final_model.model.predict(X_test)
+    y_pred = model.predict(X_test)
 
     accuracy = np.sum((y_pred >= 0.5) == (y_test == 1))/y_test.shape[0]
     print('test accuracy: ', accuracy)
