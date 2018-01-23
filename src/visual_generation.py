@@ -1,7 +1,7 @@
 """
 Scripts for generating visuals for presentation
 """
-import boto, cv2, fnmatch, keras, pickle, numpy as np, pandas as pd
+import sys, boto, cv2, fnmatch, keras, pickle, numpy as np, pandas as pd
 from boto.s3.key import Key
 from aws_functions import create_connection, get_bucket_contents
 from model_training import get_data
@@ -52,7 +52,7 @@ def get_metadata_dataframe(tree_subset, no_tree_subset):
         df.iloc[len(tree_subset) + i] = [name, row, column, 0, None, None]
     return df
 
-def get_label_visual(df, img):
+def get_label_visual(df, img, imagename):
     """Generates and saves a visual highlighting areas identified as containing
     street trees.
 
@@ -72,9 +72,9 @@ def get_label_visual(df, img):
                 img[top:bottom,left:right,1] = \
                     (255-img[top:bottom,left:right,1])*.75 + \
                      img[top:bottom, left:right, 1]
-    cv2.imwrite('labeled_visual.tif', img)
+    cv2.imwrite(imagename + '_labeled_visual.tif', img)
 
-def get_prediction_visual(df, img, model, centers):
+def get_prediction_visual(df, img, model, centers, imagename):
     """Generates and saves a visual highlighting areas identified as containing
     street trees.
 
@@ -99,20 +99,21 @@ def get_prediction_visual(df, img, model, centers):
                 img[top:bottom,left:right,1] = \
                     (255-img[top:bottom,left:right,1])*.75 + \
                      img[top:bottom, left:right, 1]
-    cv2.imwrite('predicted_visual.tif', img)
+    cv2.imwrite(imagename + '_predicted_visual.tif', img)
     return df
 
-def main():
+def main(imagename):
     conn, bucket = create_connection('treedata-ks')
     X_train, X_test, y_train, y_test = get_data(3, 141750)
-    tree_subset, no_tree_subset = get_subimage_names(bucket, '10seg520820')
+    tree_subset, no_tree_subset = get_subimage_names(bucket, imagename)
     metadata = get_metadata_dataframe(tree_subset, no_tree_subset)
-    img = cv2.imread('trees_temp/10seg520820.tif', 1)
-    get_label_visual(metadata, img)
+    img = cv2.imread('trees_temp/' + imagename + '.tif', 1)
+    get_label_visual(metadata, img, imagename)
     centers = np.mean(X_train, axis=(0, 1, 2))
     model = keras.models.load_model('trees_temp/final_model_141750images_13epochs_32batch_0.001lr_0.0reg_RGB_VGG_25dropout.h5')
-    metadata_pred = get_prediction_visual(metadata, img, model, centers)
-    pickle.dump(metadata_pred, open('trees_temp/visualization_metadata.p', "wb" ))
+    metadata_pred = get_prediction_visual(metadata, img, model, centers, imagename)
+    pickle.dump(metadata_pred, open('trees_temp/' + imagename + '_visualization_metadata.p', "wb" ))
 
 if __name__ == '__main__':
-    main()
+    imagename = sys.argv[1]
+    main(imagename)
