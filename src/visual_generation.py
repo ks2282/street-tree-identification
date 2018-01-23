@@ -60,19 +60,19 @@ def get_label_visual(df, img, imagename):
     - df (dataframe)
     - img (array): image file
     """
+    label_img = img.copy()
     for row in range(50):
         for column in range(50):
             top = 100*row
             bottom = 100*(row + 1)
             left = 100*column
             right =100*(column+1)
-            subimg = img[top:bottom,left:right,:]
             label = df[(df['row']==row) & (df['column']==column)].label.max()
             if label == 1:
-                img[top:bottom,left:right,1] = \
-                    (255-img[top:bottom,left:right,1])*.75 + \
-                     img[top:bottom, left:right, 1]
-    cv2.imwrite(imagename + '_labeled_visual.tif', img)
+                label_img[top:bottom,left:right,1] = \
+                    (255-label_img[top:bottom,left:right,1])*.75 + \
+                     label_img[top:bottom, left:right, 1]
+    cv2.imwrite(imagename + '_labeled_visual.tif', label_img)
 
 def get_prediction_visual(df, img, model, centers, imagename):
     """Generates and saves a visual highlighting areas identified as containing
@@ -84,22 +84,23 @@ def get_prediction_visual(df, img, model, centers, imagename):
     - model (Keras model): trained model to use for predictions
     - centers (array): RGB means of training data
     """
+    pred_img = img.copy()
     for row in range(50):
         for column in range(50):
             top = 100*row
             bottom = 100*(row + 1)
             left = 100*column
             right = 100*(column+1)
-            standardized_img = img[top:bottom,left:right,:] - centers
+            standardized_img = pred_img[top:bottom,left:right,:] - centers
             prediction = model.predict(standardized_img.reshape(1, 100, 100, 3))[0, 0]
             index = df[(df['row']==row) & (df['column']==column)].index
             df.prediction.iloc[index] = prediction
             df.pred_round.iloc[index] = round(prediction)
             if round(prediction) == 1:
-                img[top:bottom,left:right,1] = \
-                    (255-img[top:bottom,left:right,1])*.75 + \
-                     img[top:bottom, left:right, 1]
-    cv2.imwrite(imagename + '_predicted_visual.tif', img)
+                pred_img[top:bottom,left:right,1] = \
+                    (255-pred_img[top:bottom,left:right,1])*.75 + \
+                     pred_img[top:bottom, left:right, 1]
+    cv2.imwrite(imagename + '_predicted_visual.tif', pred_img)
     return df
 
 def main(imagename):
