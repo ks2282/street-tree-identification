@@ -1,7 +1,7 @@
 """
 Scripts for generating visuals for presentation
 """
-import boto, cv2, fnmatch, keras, numpy as np, pandas as pd
+import boto, cv2, fnmatch, keras, pickle, numpy as np, pandas as pd
 from boto.s3.key import Key
 from aws_functions import create_connection, get_bucket_contents
 from model_training import get_data
