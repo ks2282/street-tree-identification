@@ -113,8 +113,8 @@ def main():
     get_label_visual(metadata, img)
     centers = np.mean(X_train, axis=(0, 1, 2))
     model = keras.models.load_model('trees_temp/final_model_141750images_13epochs_32batch_0.001lr_0.0reg_RGB_VGG_25dropout.h5')
-    metadata = get_prediction_visual(metadata, img, model, centers)
-    pickle.dump(metadata, open('trees_temp/visualization_metadata.p', "wb" ))
+    metadata_pred = get_prediction_visual(metadata, img, model, centers)
+    pickle.dump(metadata_pred, open('trees_temp/visualization_metadata.p', "wb" ))
 
 if __name__ == '__main__':
     main()
