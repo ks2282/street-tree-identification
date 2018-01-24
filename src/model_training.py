@@ -275,16 +275,11 @@ class TreeIDModel(object):
                            optimizer=Adam(lr=self.learning_rate),
                            metrics=['accuracy'])
 
-        checkpointer = ModelCheckpoint(filepath='trees_temp/weights.hdf5',
-                                       verbose=1,
-                                       save_best_only=True)
-
         self.history = self.model.fit(self.X_train, self.y_train,
                                       batch_size = self.batch_size,
                                       validation_data=(self.X_val, self.y_val),
                                       epochs = self.num_epochs,
-                                      verbose = 1,
-                                      callbacks=[checkpointer])
+                                      verbose = 1)
 
         self.validation_metrics(self.X_train, self.y_train, 'training')
         self.validation_metrics(self.X_val, self.y_val, 'validation')
