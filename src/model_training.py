@@ -66,7 +66,7 @@ def get_data(num_channels, training_size):
     y_test = y_test.reshape(y_test.shape[0], 1)
     return X_train, X_test, y_train, y_test
 
-def standardize(X):
+def standardize(X_train, X_val):
     """Returns a standardized version of the input data.
 
     ARGUMENTS:
@@ -75,9 +75,10 @@ def standardize(X):
     RETURNS:
     (array): centered feature data
     """
-    centers = np.mean(X, axis=(0, 1, 2))
-    X = X.astype('float32') - centers
-    return X
+    centers = np.mean(X_train, axis=(0, 1, 2))
+    X_train = X_train.astype('float32') - centers
+    X_val = X_val.astype('float32') - centers
+    return X_train, X_val, centers
 
 def train_val_split(X, y):
     """Returns training and validation data.
@@ -125,6 +126,7 @@ class TreeIDModel(object):
         self.vgg_flag = 0
         self.alpha = alpha
         self.metadata_string = self.get_metadata_string()
+        self.centers = None
 
         self.model = None
         self.history = None
@@ -288,16 +290,16 @@ class TreeIDModel(object):
         self.validation_metrics(self.X_val, self.y_val, 'validation')
 
         self.metadata_string += '_VGG'
-        self.vgg_flag = 0
+        self.vgg_flag = 1
 
-    def save_data(self):
+    def save_data(self, centers):
         """Saves model and history to files.
         """
         model_filename = 'trees_temp/model_' + self.metadata_string + '.h5'
         self.model.save(model_filename)
         history_filename = 'trees_temp/hist_' + self.metadata_string + '.p'
         pickle.dump(self.history.history, open(history_filename, "wb" ))
-
+        np.save('trees_temp/centers_' + self.metadata_string + '.npy', centers)
 
 def check_filepaths():
     """Creates temporary local directory if it doesn't exist.
@@ -321,16 +323,16 @@ def main(num_channels, training_size, num_epochs, batch_size, learning_rate,
     check_filepaths()
 
     X_train, X_test, y_train, y_test = get_data(num_channels, training_size)
-    standardize(X_train)
-    X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
 
+    X_train, X_val, y_train, y_val = train_val_split(X_train, y_train)
+    X_train, X_val, centers = standardize(X_train, X_val)
     treeID = TreeIDModel(X_train, X_val, y_train, y_val, num_epochs, batch_size,
                          learning_rate, alpha)
     if vgg_flag == 1:
         treeID.vgg_model()
     else:
         treeID.nn_model()
-    treeID.save_data()
+    treeID.save_data(centers)
 
 if __name__ == '__main__':
     num_channels = int(sys.argv[1]) # if grayscale, 1; if RGB, 3
