@@ -108,11 +108,13 @@ def main(imagename):
     X_train, X_test, y_train, y_test = get_data(3, 141750)
     tree_subset, no_tree_subset = get_subimage_names(bucket, imagename)
     metadata = get_metadata_dataframe(tree_subset, no_tree_subset)
+    print(metadata.shape)
     img = cv2.imread('trees_temp/' + imagename + '.tif', 1)
     get_label_visual(metadata, img, imagename)
     centers = np.mean(X_train, axis=(0, 1, 2))
     model = keras.models.load_model('trees_temp/final_model_141750images_13epochs_32batch_0.001lr_0.0reg_RGB_VGG_25dropout.h5')
     metadata_pred = get_prediction_visual(metadata, img, model, centers, imagename)
+    print(metadata_pred.shape)
     pickle.dump(metadata_pred, open('trees_temp/' + imagename + '_visualization_metadata.p', "wb" ))
 
 if __name__ == '__main__':
