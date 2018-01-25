@@ -2,10 +2,10 @@
 Predicts test data using final model and saves output. This script should only
 be used after final model has been created and saved.
 """
-from model_training import get_data
-import keras, pickle, numpy as np
+from model_training import get_data, standardize
+import keras, pickle, sys, numpy as np
 
-def standardize_test_data(X_train, X_test):
+def standardize_test_data(X_test, centers):
     """Returns a standardized version of the input data.
 
     ARGUMENTS:
@@ -15,7 +15,6 @@ def standardize_test_data(X_train, X_test):
     RETURNS:
     (array): centered feature data for (X_test)
     """
-    centers = np.mean(X_train, axis=(0, 1, 2))
     X_test = X_test.astype('float32') - centers
     return X_test
 
@@ -44,19 +43,21 @@ def predict_test(model, X_test, y_test):
     else: precision = 'No predicted positives.'
     print('test precision: ', precision)
 
-    if np.sum(y == 1) > 0:
+    if np.sum(y_test == 1) > 0:
         recall = TP/(TP + FN)
     else: recall = 'No positive labels in data set.'
     print('test recall: ', recall, '\n')
 
     return y_pred
 
-def main():
+def main(model_filepath):
     X_train, X_test, y_train, y_test = get_data(3, 141750)
-    X_test = standardize_test_data(X_train, X_test)
-    model = keras.models.load_model('trees_temp/final_model_141750images_13epochs_32batch_0.001lr_0.0reg_RGB_VGG_25dropout.h5')
+    centers = np.load(filename)
+    X_test = standardize_test_data(X_test, centers)
+    model = keras.models.load_model(model_filepath)
     y_pred = predict_test(model, X_test, y_test)
-    np.savez_compressed('trees_temp/test_X-y-pred', X_test, y_test, y_pred)
+    np.savez_compressed('trees_temp/test_X-y-pred', X_train, y_train, y_pred)
 
 if __name__ == '__main__':
-    main()
+    model_filepath = sys.argv[1]
+    main(model_filepath)

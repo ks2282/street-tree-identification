@@ -1,5 +1,6 @@
 """
-Scripts for generating visuals for presentation
+Scripts for generating visuals for presentation. Running the script requires an
+image name and a filepath to the model to be used to generate images.
 """
 import sys, boto, cv2, fnmatch, keras, pickle, numpy as np, pandas as pd
 from boto.s3.key import Key
@@ -103,7 +104,7 @@ def get_prediction_visual(df, img, model, centers, imagename):
     cv2.imwrite(imagename + '_predicted_visual.tif', pred_img)
     return df
 
-def main(imagename):
+def main(imagename, model_filepath):
     conn, bucket = create_connection('treedata-ks')
     X_train, X_test, y_train, y_test = get_data(3, 141750)
     tree_subset, no_tree_subset = get_subimage_names(bucket, imagename)
@@ -111,10 +112,11 @@ def main(imagename):
     img = cv2.imread('trees_temp/' + imagename + '.tif', 1)
     get_label_visual(metadata, img, imagename)
     centers = np.mean(X_train, axis=(0, 1, 2))
-    model = keras.models.load_model('trees_temp/final_model_141750images_13epochs_32batch_0.001lr_0.0reg_RGB_VGG_25dropout.h5')
+    model = keras.models.load_model(model_filepath)
     metadata_pred = get_prediction_visual(metadata, img, model, centers, imagename)
     pickle.dump(metadata_pred, open('trees_temp/' + imagename + '_visualization_metadata.p', "wb" ))
 
 if __name__ == '__main__':
     imagename = sys.argv[1]
-    main(imagename)
+    model_filepath = sys.argv[2]
+    main(imagename, model_filepath)
