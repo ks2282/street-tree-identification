@@ -6,8 +6,9 @@ Street trees make a huge difference for my enjoyment of a walk or run, and take 
 
 ## Data Preparation
 1. The 81 high-resolution aerial images of San Francisco from USGS were divided into 2,500 subimages each.
-2. Each subimage was labeled as either containing a street tree or not containing a street tree, by comparing the bounding geocodes of each subimage to the list of San Francisco street trees from the Department of Public Works.
-3. Data was kept as color (RGB), and standardized by subtracting the mean RGB values of the entire training data set from each pixel of each image.
+2. As the selected imagery was from April 2011, all trees planted after that date were excluded from the list of street trees.
+3. Each subimage was labeled as either containing a street tree or not containing a street tree, by comparing the bounding geocodes of each subimage to the list of San Francisco street trees from the Department of Public Works.
+4. Data was kept as color (RGB), and standardized by subtracting the mean RGB values of the entire training data set from each pixel of each image.
 
 ## Model Specifications
 
@@ -19,7 +20,22 @@ The model used is based on the VGG16 convolutional neural network architecture, 
 - One fully connected layer with Sigmoid output functions
 - Binary cross-entropy loss function
 
-## Results
+## Current Results
+Current best configuration for training:
+- 13 epochs
+- Full training data set (142k images), with 30% set aside for validation
+- Learning rate of 0.01 (with Adam optimizer)
+- Color (RGB)
+
+Current best results:
+- Training Set:
+  - Accuracy: 88%
+  - Precision: 72%
+  - Recall: 75%
+- Validation Set:
+  - Accuracy: 88%
+  - Precision: 70%
+  - Recall: 74%
 
 ## Technology Used
 - Python
@@ -30,7 +46,7 @@ The model used is based on the VGG16 convolutional neural network architecture, 
   - EC2 GPU for model training
 
 ## Next Steps
-- Improve data quality
+- Improve data processing pipeline to make data more granular
 - Detect street trees in imagery from other cities
 - Time-series analyses
   - Detect tree health issues
@@ -39,12 +55,14 @@ The model used is based on the VGG16 convolutional neural network architecture, 
 
 ## Code Files
 
-- [aws_functions](https://github.com/ks2282/street-tree-identification/blob/master/src/aws_functions.py): Functions for connecting to AWS and retrieving information
-- [aws_image_processing](https://github.com/ks2282/street-tree-identification/blob/master/src/aws_image_processing.py): Scripts for retrieving data, processing images, and loading data back to S3.
-- [image_prep](https://github.com/ks2282/street-tree-identification/blob/master/src/image_prep.py): ImageProcessor class for taking an image, generating subimages, and assigning a label to each subimage.
-- [training_data_prep](https://github.com/ks2282/street-tree-identification/blob/master/src/training_data_prep.py): Script for converting subimages into arrays, splitting into test/train sets, and loading compressed numpy arrays back to S3.
-- [model_training](https://github.com/ks2282/street-tree-identification/blob/master/src/model_training.py): Script for retrieving and preprocessing the labeled data, and TreeIDModel class for modeling the data set.
-- [generate_final_model](https://github.com/ks2282/street-tree-identification/blob/master/src/generate_final_model.py): Script for generating final model using parameters selected through validation process.
+- [aws_functions](https://github.com/ks2282/street-tree-identification/blob/master/src/aws_functions.py): functions for connecting to AWS and retrieving information
+- [aws_image_processing](https://github.com/ks2282/street-tree-identification/blob/master/src/aws_image_processing.py): scripts for retrieving data, processing images, and loading data back to S3
+- [image_prep](https://github.com/ks2282/street-tree-identification/blob/master/src/image_prep.py): ImageProcessor class for taking an image, generating subimages, and assigning a label to each subimage
+- [training_data_prep](https://github.com/ks2282/street-tree-identification/blob/master/src/training_data_prep.py): script for converting subimages into arrays, splitting into test/train sets, and loading compressed numpy arrays back to S3
+- [model_training](https://github.com/ks2282/street-tree-identification/blob/master/src/model_training.py): script for retrieving and preprocessing the labeled data, and TreeIDModel class for modeling the data set
+- [visual_generation](https://github.com/ks2282/street-tree-identification/blob/master/src/visual_generation.py): saves images highlighting labels and predictions, and saves a pickle file with a dataframe containing the underlying label and prediction data
+- [generate_final_model](https://github.com/ks2282/street-tree-identification/blob/master/src/generate_final_model.py): script for generating final model using parameters to be selected through validation process
+- [test_predictions](https://github.com/ks2282/street-tree-identification/blob/master/src/test_predictions.py): runs final model on test data
 
 
 ## References

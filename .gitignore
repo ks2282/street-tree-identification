@@ -2,6 +2,15 @@
 .ipynb_checkpoints
 data_storage.ipynb
 street_tree_data_exploration.ipynb
+geo_experiments.ipynb
+src/Debugging_NN.ipynb
+src/Image_processing.ipynb
+src/Images.ipynb
 
-#raw data
+
+
+#directories
 data/
+prezo/
+trees_temp/
+src/__pycache__/
