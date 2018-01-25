@@ -50,14 +50,15 @@ def predict_test(model, X_test, y_test):
 
     return y_pred
 
-def main(model_filepath):
+def main(model_filepath, centers_filepath):
     X_train, X_test, y_train, y_test = get_data(3, 141750)
-    centers = np.load(filename)
+    centers = np.load(centers_filepath)
     X_test = standardize_test_data(X_test, centers)
     model = keras.models.load_model(model_filepath)
     y_pred = predict_test(model, X_test, y_test)
-    np.savez_compressed('trees_temp/test_X-y-pred', X_train, y_train, y_pred)
+    np.savez_compressed('trees_temp/test_X-y-pred', X_test, y_test, y_pred)
 
 if __name__ == '__main__':
     model_filepath = sys.argv[1]
-    main(model_filepath)
+    centers_filepath = sys.argv[2]
+    main(model_filepath, centers_filepath)
