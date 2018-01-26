@@ -20,7 +20,7 @@ The model used is based on the VGG16 convolutional neural network architecture, 
 - One fully connected layer with Sigmoid output function
 - Binary cross-entropy loss function
 
-![Architecture](https://github.com/ks2282/street-tree-identification/blob/master/Images/Architecture%20Diagram.png&s=200)
+![Architecture](https://github.com/ks2282/street-tree-identification/blob/master/Images/Architecture%20Diagram.png){:height="50%" width="50%"}
 
 ## Current Results
 Current best configuration for training:
