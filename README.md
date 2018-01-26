@@ -17,8 +17,10 @@ The model used is based on the VGG16 convolutional neural network architecture, 
 - 13 convolutional layers with zero padding
 - Batch Normalization after each convolutional layer
 - Dropout after each block of convolutional layers
-- One fully connected layer with Sigmoid output functions
+- One fully connected layer with Sigmoid output function
 - Binary cross-entropy loss function
+
+![Architecture](https://github.com/ks2282/street-tree-identification/blob/master/Images/Architecture%20Diagram.png)
 
 ## Current Results
 Current best configuration for training:
