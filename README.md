@@ -1,5 +1,5 @@
 # Identifying Street Trees in Aerial Imagery
-Capstone Project by Kristie Sarkar (Galvanize San Francisco)
+Kristie Sarkar, January 2018
 
 ## Motivation
 Street trees make a huge difference for my enjoyment of a walk or run, and take a lot of effort from municipalities to maintain. The ultimate goal of this project is to create something that can help cities survey and maintain trees. I also hope to personally use the output to help me plan more scenic long runs and get me out the door in my running shoes more often.
@@ -20,7 +20,7 @@ The model used is based on the VGG16 convolutional neural network architecture, 
 - One fully connected layer with Sigmoid output function
 - Binary cross-entropy loss function
 
-![Architecture](https://github.com/ks2282/street-tree-identification/blob/master/Images/Architecture%20Diagram.png =400x450)
+<img src='https://github.com/ks2282/street-tree-identification/blob/master/Images/Architecture%20Diagram.png' style="float: center; height: 450px; width: 400px" alt="Architecture">
 
 ## Current Results
 Current best configuration for training:
