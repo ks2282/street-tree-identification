@@ -14,7 +14,7 @@ def get_tree_data(destination, bucket):
     - bucket (S3 bucket): where tree csv file lives
 
     RETURNS:
-    - (dataframe): contains information in the street tree dataset
+    - (dataframe): information in the street tree dataset
     """
     key = bucket.get_key('metadata/Street_Tree_List.csv')
     filename = destination + '/metadata/tree_data.csv'
@@ -53,20 +53,31 @@ def get_imagery_metadata(destination, bucket):
     return df
 
 def get_s3_image(bucket, filename):
-    """Returns an image from a filepath to S3
+    """Returns an image from a filepath to S3.
 
     ARGUMENTS:
-    - filepath: string, s3 uri to tif file
+    - filepath (string) S3 uri to tif file
 
     RETURNS:
-    - Image
+    (Image): retrieved image
     """
     key = bucket.get_key(filename)
     tmp = io.BytesIO()
     key.get_contents_to_file(tmp)
     return Image.open(tmp)
 
-def process_s3_images(bucket, subfolder, image_metadata, output_path, side_length, tree_data):
+def process_s3_images(bucket, subfolder, image_metadata, output_path,
+                      side_length, tree_data):
+    """Processes images in S3 into labeled subimages.
+
+    ARGUMENTS:
+    - bucket (S3 bucket) 
+    - subfolder (string)
+    - image_metadata (dataframe)
+    - output_path (string)
+    - side_length (int)
+    - tree_data (dataframe)
+    """
     image_files = get_bucket_contents(bucket, subfolder)
     for filename in image_files[5:6]:
         img = get_s3_image(bucket, filename)
@@ -78,6 +89,7 @@ def load_to_s3(destination, bucket):
     """Loads labeled data to s3.
 
     ARGUMENTS:
+    - destination (string)
     - bucket (s3 bucket)
     """
     for filename in os.listdir(destination + '/HasStreetTree'):
@@ -98,6 +110,11 @@ def check_filepaths():
         os.makedirs(destination + '/NoStreetTree')
 
 def main(destination, side_length):
+    """
+    ARGUMENTS:
+    - destination (string)
+    - side_length (int)
+    """
     check_filepaths()
     conn, bucket = create_connection('treedata-ks')
     trees_df = get_tree_data(destination, bucket)

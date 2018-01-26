@@ -48,7 +48,8 @@ def get_data(num_channels, training_size):
     - training_size (int): limits amount of data to train
 
     RETURNS:
-    (array, array): (features, labels)
+    (array, array, array, array): (training features, testing features,
+                                   training labels, testing labels)
     """
     if num_channels == 1:
         filename = 'test_train_data.npz'
@@ -70,10 +71,12 @@ def standardize(X_train, X_val):
     """Returns a standardized version of the input data.
 
     ARGUMENTS:
-    X (array): feature data
+    X_train (array): training feature data
+    X_val (array): validation feature data
 
     RETURNS:
-    (array): centered feature data
+    (array, array, array): (training features, validation features,
+                            training means)
     """
     centers = np.mean(X_train, axis=(0, 1, 2))
     X_train = X_train.astype('float32') - centers
@@ -95,7 +98,7 @@ def train_val_split(X, y):
     return X_train, X_val, y_train, y_val
 
 class TreeIDModel(object):
-    """
+    """Sets up data and trains model.
     """
     def __init__(self, X_train, X_val,
                  y_train, y_val,
@@ -133,6 +136,9 @@ class TreeIDModel(object):
 
     def get_metadata_string(self):
         """Returns a metadata string used for naming saved files.
+
+        RETURNS:
+        (string)
         """
         metadata_string = str(self.training_size) + 'images_' + \
                           str(self.num_epochs) + 'epochs_' + \
@@ -144,6 +150,11 @@ class TreeIDModel(object):
 
     def validation_metrics(self, X, y, data_label):
         """Prints loss, accuracy, precision, and recall for the data.
+
+        ARGUMENTS:
+        - X (array): feature data
+        - y (array): label data
+        - data_label (string): specification of data set type for printing info
         """
         score = self.model.evaluate(X, y, verbose=0)
         print(data_label + ' loss:' , score[0])
@@ -211,6 +222,9 @@ class TreeIDModel(object):
 
     def add_convolutional_layer(self, num_filters):
         """Adds a convolutional layer to the model.
+
+        ARGUMENTS:
+        - num_filters (int)
         """
         self.model.add(Conv2D(num_filters, (3, 3), activation='relu',
                               kernel_initializer='he_normal',
@@ -289,6 +303,9 @@ class TreeIDModel(object):
 
     def save_data(self, centers):
         """Saves model and history to files.
+
+        ARGUMENTS:
+        - centers (array): channel means of training feature data
         """
         model_filename = 'trees_temp/model_' + self.metadata_string + '.h5'
         self.model.save(model_filename)

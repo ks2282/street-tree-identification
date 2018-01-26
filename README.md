@@ -61,7 +61,6 @@ Current best results:
 - [training_data_prep](https://github.com/ks2282/street-tree-identification/blob/master/src/training_data_prep.py): script for converting subimages into arrays, splitting into test/train sets, and loading compressed numpy arrays back to S3
 - [model_training](https://github.com/ks2282/street-tree-identification/blob/master/src/model_training.py): script for retrieving and preprocessing the labeled data, and TreeIDModel class for modeling the data set
 - [visual_generation](https://github.com/ks2282/street-tree-identification/blob/master/src/visual_generation.py): saves images highlighting labels and predictions, and saves a pickle file with a dataframe containing the underlying label and prediction data
-- [generate_final_model](https://github.com/ks2282/street-tree-identification/blob/master/src/generate_final_model.py): script for generating final model using parameters to be selected through validation process
 - [test_predictions](https://github.com/ks2282/street-tree-identification/blob/master/src/test_predictions.py): runs final model on test data
 
 

@@ -29,6 +29,8 @@ class ImageProcessor(object):
         - img (Image): image to process
         - image_metadata (dataframe): metadata file containing name and bounding
             coordinates of each subimage
+        - filename (string)
+        - output_path (string)
         """
         self.img = img # the image
         self.width = self.img.size[0] # width of the image
@@ -44,8 +46,8 @@ class ImageProcessor(object):
         """Returns bounding coordinates of the image.
 
         RETURNS:
-        - image_NW (float, float): northwest corner coordinates (latitude, longitude)
-        - image_SE (float, float): southeast corner coordinates (latitude, longitude)
+        ((float, float), (float, float)): ((NW Latitude, NW Longitude),
+                                           (SE Latitude, SE Longitude))
         """
         name = self.filename.lower()
         record = self.image_metadata[self.image_metadata['Image Name'] == name]
@@ -64,7 +66,7 @@ class ImageProcessor(object):
         - side_length (int)
 
         RETURNS:
-        - subimage (Image)
+        (Image)
         """
         bbox = (column*side_length,
                 row*side_length,
@@ -83,8 +85,8 @@ class ImageProcessor(object):
         - coord_step (tuple): coordinate offset per subimage step
 
         RETURNS:
-        - subimage_NW (tuple of floats): subimage northwest coordinates
-        - subimage_SE (tuple of floats): subimage southeast coordinates
+        ((float, float), (float, float)): ((NW Latitude, NW Longitude),
+                                           (SE Latitude, SE Longitude))
         """
         subimage_NW = (self.image_NW[0] + row*coord_step[0],
                        self.image_NW[1] + column*coord_step[1])
@@ -97,11 +99,11 @@ class ImageProcessor(object):
 
         ARGUMENTS:
         - tree_data (dataframe): contains coordinates for each known street tree
-        - subimage_NW (tuple of floats)
-        - subimage_SE (tuple of floats)
+        - subimage_NW (float, float): (NW Latitude, NW Longitude)
+        - subimage_SE (float, float): (SE Latitude, SE Longitude)
 
         RETURNS:
-        - boolean
+        (boolean)
         """
         included_tree = tree_data.copy()
         included_tree = included_tree[included_tree['Latitude'] < subimage_NW[0]]

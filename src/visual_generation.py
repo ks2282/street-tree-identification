@@ -11,6 +11,7 @@ def get_subimage_names(bucket, imagename):
     """Gets labeled subimage filenames from S3.
 
     ARGUMENTS:
+    - bucket (S3 bucket)
     - imagename (string)
 
     RETURNS:
@@ -60,6 +61,7 @@ def get_label_visual(df, img, imagename):
     ARGUMENTS:
     - df (dataframe)
     - img (array): image file
+    - imagename (string)
     """
     label_img = img.copy()
     for row in range(50):
@@ -83,7 +85,10 @@ def get_prediction_visual(df, img, model, centers, imagename):
     - df (dataframe)
     - img (array): image file
     - model (Keras model): trained model to use for predictions
-    - centers (array): RGB means of training data
+    - centers (array): channel means of training data
+
+    RETURNS:
+    (dataframe)
     """
     pred_img = img.copy()
     for row in range(50):
@@ -105,6 +110,11 @@ def get_prediction_visual(df, img, model, centers, imagename):
     return df
 
 def main(imagename, model_filepath):
+    """
+    ARGUMENTS:
+    - imagename (string)
+    - model_filepath (string)
+    """
     conn, bucket = create_connection('treedata-ks')
     X_train, X_test, y_train, y_test = get_data(3, 141750)
     tree_subset, no_tree_subset = get_subimage_names(bucket, imagename)

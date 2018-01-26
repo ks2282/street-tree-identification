@@ -12,10 +12,10 @@ def s3_image_to_array(bucket, filename, image_color_flag):
     ARGUMENTS:
     - bucket (s3 bucket)
     - filename (string): s3 uri to tif file
-    - image_color_flag (integer): 1 for color, 0 for grayscale
+    - image_color_flag (int): 1 for color, 0 for grayscale
 
     RETURNS:
-    - numpy array
+    (array): represents the image
     """
     key = bucket.get_key(filename)
     key.get_contents_to_filename('trees_temp/tmp.tif')
@@ -28,10 +28,10 @@ def get_image_array_lists(bucket, image_color_flag):
 
     ARGUMENTS:
     - bucket (s3 bucket)
+    - image_color_flag (int)
 
     RETURNS:
-    - One list of image arrays, one list of labels (each array represents an
-        image in greyscale)
+    - (array, array): (feature data, label data)
     """
     data = []
     labels = []
@@ -50,18 +50,29 @@ def get_image_array_lists(bucket, image_color_flag):
     return np.array(data), np.array(labels)
 
 def split_training_data(data, labels):
-    """Returns
+    """Returns data split between training and testing subsets.
 
     ARGUMENTS:
-    - bucket (s3 bucket)
-    - data (numpy array of numpy arrays)
-    - labels (numpy array of binary values)
+    - data (array): feature data
+    - labels (array): label data
+
+    RETURNS:
+    (array, array, array, array): (training features, testing features,
+                                   training labels, testing labels)
     """
     X_train, X_test, y_train, y_test = train_test_split(data, labels, test_size=0.3)
     return X_train, X_test, y_train, y_test
 
 def save_data_to_s3(bucket, X_train, X_test, y_train, y_test, image_color_flag):
-    """Saves arrays locally and to s3
+    """Saves arrays locally and to s3.
+
+    ARGUMENTS:
+    - bucket (S3 bucket)
+    - X_train (array)
+    - X_test (array)
+    - y_train (array)
+    - y_test (array)
+    - image_color_flag (int)
     """
     if image_color_flag == 1:
         filename = 'test_train_data_color.npz'
@@ -78,6 +89,10 @@ def check_filepaths():
         os.makedirs('trees_temp')
 
 def main(image_color_flag):
+    """
+    ARGUMENTS:
+    - image_color_flag (int)
+    """
     check_filepaths()
     conn, bucket = create_connection('treedata-ks')
     data, labels = get_image_array_lists(bucket, image_color_flag)

@@ -5,7 +5,10 @@ def create_connection(bucket_name):
     """Returns s3 connection and specified bucket.
 
     ARGUMENTS:
-    - bucket_name (string)
+    - bucket_name (string): name of bucket to retrieve
+
+    RETURNS:
+    (connection, bucket): S3 connection, S3 bucket
     """
     conn = boto.connect_s3()
     bucket = conn.get_bucket(bucket_name)
@@ -20,7 +23,7 @@ def get_bucket_contents(bucket, subfolder):
     - subfolder (string)
 
     RETURNS:
-    - list of files contained in specified subfolder
+    (list): files contained in specified subfolder
     """
     lst = [key.name for key in bucket]
     return fnmatch.filter(lst, subfolder + '/*')[1:]

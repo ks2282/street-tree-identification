@@ -9,8 +9,8 @@ def standardize_test_data(X_test, centers):
     """Returns a standardized version of the input data.
 
     ARGUMENTS:
-    X_train (array): feature data
-    X_test (array): feature data for test set
+    - X_test (array): feature data for test set
+    - centers (array): channel means of training features
 
     RETURNS:
     (array): centered feature data for (X_test)
@@ -19,8 +19,15 @@ def standardize_test_data(X_test, centers):
     return X_test
 
 def predict_test(model, X_test, y_test):
-    """
+    """Predicts class for test set, compares to test labels, and prints metrics.
 
+    ARGUMENTS:
+    - model (Keras model)
+    - X_test (array): testing feature data
+    - y_test (array): testing label data
+
+    RETURNS:
+    (array): predictions for test data
     """
     score = model.evaluate(X_test, y_test, verbose=0)
     print('test loss:' , score[0])
@@ -51,6 +58,11 @@ def predict_test(model, X_test, y_test):
     return y_pred
 
 def main(model_filepath, centers_filepath):
+    """
+    ARGUMENTS:
+    - model_filepath (string)
+    - centers_filepath (string)
+    """
     X_train, X_test, y_train, y_test = get_data(3, 141750)
     centers = np.load(centers_filepath)
     X_test = standardize_test_data(X_test, centers)
